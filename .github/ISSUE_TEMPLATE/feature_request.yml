@@ -1,0 +1,16 @@
+name: Feature request
+description: Propose a focused improvement to the research workflow.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What research or engineering problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior and how to verify it
+      description: For model integrations, include the official source, license and evaluation data provenance.
+    validations:
+      required: true

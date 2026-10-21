@@ -1,0 +1,25 @@
+name: Bug report
+description: Report a reproducible problem using synthetic inputs.
+body:
+  - type: markdown
+    attributes:
+      value: "For a security-sensitive report, follow SECURITY.md. Do not include keys, private signals or identifying logs."
+  - type: input
+    id: versions
+    attributes:
+      label: Package version, Python version and operating system
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal synthetic reproduction
+      description: Include the command or short code example and the service response if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Expected and observed behavior
+    validations:
+      required: true

@@ -1,0 +1,45 @@
+# Python / build outputs
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+.ci/
+
+# Secrets and local configuration
+.env
+*.env
+!.env.example
+secrets/
+*.pem
+*.key
+
+# Runtime artifacts and private inputs
+logs/
+reports/
+artifacts/
+diag-evidence-output/
+evaluation-output/
+*.log
+*.jsonl
+private_data/
+
+# Model checkpoints are never part of the source distribution
+*.pt
+*.pth
+*.safetensors
+*.bin
+*.onnx
+*.pkl
+*.pickle
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

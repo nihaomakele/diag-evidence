@@ -1,0 +1,10 @@
+# Actual clean-install validation snapshot: CPython 3.12, macOS arm64.
+# The downloaded NumPy wheel targets macOS 14+ arm64. This is not a universal
+# lock for every supported Python version/platform; CI resolves pyproject.toml.
+# Install these runtime dependencies, then install the project with --no-deps.
+certifi==2026.7.22
+charset-normalizer==3.5.2
+idna==3.20
+numpy==2.5.4
+requests==2.34.2
+urllib3==2.8.0
