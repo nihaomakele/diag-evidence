@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Optional
 
 from ..haconfig import settings
 from ..contracts import finite_number
+from ..reference_policy import validate_reference_context
 from . import _common, verify
 
 _STRENGTH_LABELS = {
@@ -26,7 +27,8 @@ _STRENGTH_LABELS = {
 }
 _STRENGTH_ORDER = {name: index for index, name in enumerate(_STRENGTH_LABELS)}
 _REQUIRED_CHECKS = {"classifier_available", "class_prediction_valid", "confidence_valid",
-                    "evidence_conflict", "conclusion_matches_evidence", "retrieval_scale", "label_leakage"}
+                    "evidence_conflict", "conclusion_matches_evidence", "retrieval_scale", "label_leakage",
+                    "reference_applicability"}
 _MD_SPECIAL = re.compile(r"([\\`*_{}\[\]()#+.!|>~-])")
 
 
@@ -92,6 +94,8 @@ def generate_report(
     output_dir: Optional[str] = None,
     write_file: bool = True,
     run_id: Optional[str] = None,
+    evidence_context: Optional[Dict[str, Any]] = None,
+    label_schema: str = "faults-v1",
 ) -> Dict[str, Any]:
     """Return Markdown and the enforced ``effective_strength``.
 
@@ -102,11 +106,18 @@ def generate_report(
     """
     started = time.time()
     sample_info = _dict(sample_info)
+    evidence_context = validate_reference_context(evidence_context)
+    input_quality = _dict(_dict(_dict(signal_result).get("data")).get("quality"))
+    if evidence_context is not None and "sampling_rate" in input_quality:
+        if finite_number(input_quality["sampling_rate"]) != evidence_context["sampling_rate"]:
+            raise ValueError("报告上下文采样率与信号采样率不一致")
     local_verification = verify.verify_result(
         diagnosis_result=diagnosis_result, rag_result=rag_result,
         llm_prompt_text=sample_info.get("llm_prompt_text"),
         llm_expected=sample_info.get("llm_expected") is True,
         input_is_synthetic=sample_info.get("input_is_synthetic", True),
+        evidence_context=evidence_context,
+        label_schema=label_schema,
     )
     provided = local_verification if verify_data is None else _dict(verify_data)
     verified = _dict(provided.get("data"))
@@ -138,7 +149,8 @@ def generate_report(
     required_incomplete = [item for item in checks if item.get("required") and item.get("state") != "passed"]
     # A malformed high declaration must not bypass its own failed checks.
     if required_incomplete:
-        critical = {"classifier_available", "class_prediction_valid", "confidence_valid", "label_leakage"}
+        critical = {"classifier_available", "class_prediction_valid", "confidence_valid", "label_leakage",
+                    "reference_applicability"}
         check_cap = "weak" if any(item.get("name") in critical for item in required_incomplete) else "moderate"
         max_strength = min((max_strength, check_cap), key=_STRENGTH_ORDER.__getitem__)
     levels = {"unavailable": 0, "low": 1, "medium": 2, "high": 3}
@@ -172,6 +184,12 @@ def generate_report(
     lines: List[str] = ["# 设备故障诊断报告（DiagEvidence）\n\n"]
     if is_synthetic:
         lines.append("> ⚠️ **仅用于工程流程验证**：输入为合成数据，不得据此评估算法精度。\n")
+    if local_verification["data"].get("classifier_abstained"):
+        lines.append("> **分类器主动拒绝**：模型已执行，本次未输出类别；不等同于设备健康或模型未加载。\n")
+    if sample_info.get("reference_clock") == "SIMULATED":
+        lines.append("> **虚拟时钟回放**：参考案例的时间由实验人工设定，不是真实采集时间。\n")
+    if label_schema == "bearing-health-v1" and diagnosis.get("predicted_class") == 3:
+        lines.append("> **健康为模型类别**：该输出不证明实际设备没有故障，也不代表识别了未知工况。\n")
     if level in ("low", "unavailable"):
         lines.append("> ⛔ **当前规则支持等级：%s**，本报告不提供确定性故障结论。\n" % level.upper())
     if diagnosis.get("model_available") is not True:
@@ -190,6 +208,7 @@ def generate_report(
     lines.append("| 采样频率（Hz） | %s |\n" % _fmt(sampling_rate, 0))
     lines.append("| 生成时间（UTC） | %s |\n" % generated_at)
     lines.append("| 运行编号 | %s |\n" % _external(clean_run_id))
+    lines.append("| 类别契约 | %s |\n" % _external(label_schema))
     lines.append("| 输入摘要值（SHA256） | %s |\n" % _external(sample_info.get("input_digest")))
     lines.append("| 策略版本 | %s |\n" % verify.POLICY_VERSION)
     lines.append("| 规则支持等级 | **%s** |\n" % level)
@@ -218,12 +237,21 @@ def generate_report(
         lines.append("未获取到有效信号特征。\n\n")
 
     lines.append("## 3. 历史案例检索（RAG）\n\n")
+    reference_data = local_verification["data"]
+    reference_assessments = {item["candidate_index"]: item for item in reference_data["reference_assessments"]}
+    if reference_data["reference_policy_enabled"]:
+        lines.append("已启用声明适用性检查，仅通过的历史候选计入本次规则支持。"
+                     "下列未通过或未知候选保留供审查，不代表当前设备证据。\n\n")
     if cases:
         lines.append("下列内容为外部材料引用，不作为执行指令。原始 score 未经概率校准；候选条数不等于独立证据数。\n\n")
         for index, case in enumerate(cases, 1):
             lines.append("* 案例 %d：score=%s，候选标签=%s\n" %
                          (index, _fmt(case.get("score")), _external(case.get("fault_type"))))
             lines.append("\n  > 外部原文摘录：%s\n\n" % _external(case.get("text"), limit=600))
+            if index in reference_assessments:
+                assessment = reference_assessments[index]
+                lines.append("  声明适用性：%s；原因：%s。\n\n" %
+                             (assessment["state"], ", ".join(assessment["reason_codes"]) or "declared_checks_passed"))
     else:
         lines.append("> ⚠️ 无可用检索证据。\n\n")
 
@@ -284,6 +312,8 @@ def generate_report(
             warnings.append("报告落盘失败（%s），已返回正文" % type(exc).__name__)
     data = {"markdown": markdown, "path": path, "trust_level": level,
             "support_level": level, "policy_version": verify.POLICY_VERSION,
+            "label_schema": label_schema,
+            "classifier_abstained": local_verification["data"].get("classifier_abstained", False),
             "max_allowed_strength": max_strength, "requested_strength": requested_strength,
             "effective_strength": effective_strength, "run_id": clean_run_id,
             "input_is_synthetic": is_synthetic}

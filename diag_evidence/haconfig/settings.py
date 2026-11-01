@@ -21,6 +21,16 @@ FAULT_LABELS = {
 }
 
 
+def class_labels(schema: str = "faults-v1") -> dict:
+    """Return a fresh, explicit ontology; healthy is opt-in, never unknown/OOD."""
+    if not isinstance(schema, str) or schema not in ("faults-v1", "bearing-health-v1"):
+        raise ValueError("不支持的 label_schema")
+    labels = {key: dict(value) for key, value in FAULT_LABELS.items()}
+    if schema == "bearing-health-v1":
+        labels[3] = {"name": "健康", "name_en": "Healthy"}
+    return labels
+
+
 class MissingAPIKeyError(RuntimeError):
     """A required optional provider credential was not supplied."""
 
@@ -83,8 +93,10 @@ class Settings:
     fd_diagnose_timeout: float = FD_DIAGNOSE_TIMEOUT
     max_retries: int = MAX_RETRIES
     retry_backoff: float = RETRY_BACKOFF
+    label_schema: str = "faults-v1"
 
     def __post_init__(self) -> None:
+        class_labels(self.label_schema)
         for endpoint in self.services:
             endpoint.validate()
         if (isinstance(self.signal_window_size, bool)
@@ -147,7 +159,8 @@ class Settings:
     def describe(self) -> dict:
         return {"rag_base_url": self.rag_base_url, "fd_base_url": self.fd_base_url,
                 "ui_base_url": self.ui_base_url, "signal_window_size": self.signal_window_size,
-                "sampling_rate": self.sampling_rate, "reports_dir": str(self.reports_dir),
+                "sampling_rate": self.sampling_rate, "label_schema": self.label_schema,
+                "reports_dir": str(self.reports_dir),
                 "logs_dir": str(self.logs_dir), "api_key_present": bool(get_api_key())}
 
 

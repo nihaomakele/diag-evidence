@@ -10,10 +10,12 @@ from ..haconfig import settings
 from . import _common
 
 _Transport = Callable[..., Any]
+ABSTENTION_REASONS = {"outside_training_support", "below_selection_threshold", "validation_quality_unmet"}
 
 
-def _map_diagnosis(diagnosis: Any) -> Dict[str, Any]:
+def _map_diagnosis(diagnosis: Any, label_schema: str = "faults-v1") -> Dict[str, Any]:
     """Validate the classifier result before making it available to the verifier."""
+    labels = settings.class_labels(label_schema)
     unavailable = {"predicted_class": None, "confidence": None,
                    "predicted_fault": {"name": "模型不可用", "name_en": "Model Unavailable"},
                    "class_probabilities": {}, "model_available": False,
@@ -21,6 +23,21 @@ def _map_diagnosis(diagnosis: Any) -> Dict[str, Any]:
     if not isinstance(diagnosis, dict):
         unavailable["contract_errors"] = ["diagnosis 必须为 JSON 对象"]
         return unavailable
+    if "abstained" in diagnosis and type(diagnosis["abstained"]) is not bool:
+        unavailable["contract_errors"] = ["abstained 必须为布尔值"]
+        return unavailable
+    if diagnosis.get("abstained") is True:
+        reason = diagnosis.get("abstention_reason")
+        if (not isinstance(reason, str) or reason not in ABSTENTION_REASONS) or any(
+                diagnosis.get(key) is not None for key in ("predicted_class", "confidence")) or (
+                diagnosis.get("class_probabilities") not in (None, {})):
+            unavailable["contract_errors"] = ["主动拒绝须提供已知原因，且不得同时提供类别、置信度或概率"]
+            return unavailable
+        return {"predicted_class": None, "confidence": None,
+                "predicted_fault": {"name": "主动拒绝分类", "name_en": "Classification Abstained"},
+                "class_probabilities": {}, "model_available": True, "abstained": True,
+                "abstention_reason": reason, "label_schema": label_schema,
+                "conclusion_strength": "no_conclusion", "contract_errors": []}
     # The documented no-model sentinel is not a malformed classification.
     if diagnosis.get("predicted_class") == -1 and not isinstance(diagnosis.get("predicted_class"), bool):
         unavailable["note"] = "服务报告模型未加载"
@@ -28,9 +45,9 @@ def _map_diagnosis(diagnosis: Any) -> Dict[str, Any]:
 
     errors = []
     predicted = diagnosis.get("predicted_class")
-    valid_predicted = isinstance(predicted, int) and not isinstance(predicted, bool) and predicted in settings.FAULT_LABELS
+    valid_predicted = isinstance(predicted, int) and not isinstance(predicted, bool) and predicted in labels
     if not valid_predicted:
-        errors.append("predicted_class 缺失或不属于受支持的类别 0/1/2")
+        errors.append("predicted_class 缺失或不属于当前 label_schema")
     try:
         confidence = finite_number(diagnosis.get("confidence"))
         if not 0 <= confidence <= 1:
@@ -45,7 +62,7 @@ def _map_diagnosis(diagnosis: Any) -> Dict[str, Any]:
     elif isinstance(fault, dict) and valid_predicted:
         for key in ("name", "name_en"):
             value = fault.get(key)
-            if value is not None and value != settings.FAULT_LABELS[predicted][key]:
+            if value is not None and value != labels[predicted][key]:
                 errors.append("predicted_fault 与 predicted_class 不一致")
                 break
 
@@ -54,28 +71,28 @@ def _map_diagnosis(diagnosis: Any) -> Dict[str, Any]:
         probabilities = {}
     if probabilities != {}:
         try:
-            if not isinstance(probabilities, dict) or len(probabilities) != len(settings.FAULT_LABELS):
+            if not isinstance(probabilities, dict) or len(probabilities) != len(labels):
                 raise ValueError
             normalized = {}
             for key, value in probabilities.items():
                 # JSON converts integer map keys into strings.
-                if isinstance(key, bool) or str(key) not in {"0", "1", "2"}:
+                if isinstance(key, bool) or str(key) not in {str(k) for k in labels}:
                     raise ValueError
                 if isinstance(value, dict):
                     probability = finite_number(value.get("probability"))
                     label = value.get("name")
-                    if label is not None and label != settings.FAULT_LABELS[int(key)]["name"]:
+                    if label is not None and label != labels[int(key)]["name"]:
                         raise ValueError
                 else:
                     probability = finite_number(value)
                 if not 0 <= probability <= 1 or int(key) in normalized:
                     raise ValueError
                 normalized[int(key)] = probability
-            if set(normalized) != set(settings.FAULT_LABELS) or not math.isclose(sum(normalized.values()), 1.0, abs_tol=1e-5):
+            if set(normalized) != set(labels) or not math.isclose(sum(normalized.values()), 1.0, abs_tol=1e-5):
                 raise ValueError
             if valid_predicted and confidence is not None and not math.isclose(normalized[predicted], confidence, abs_tol=1e-5):
                 raise ValueError
-            probabilities = {str(key): {**settings.FAULT_LABELS[key], "probability": value}
+            probabilities = {str(key): {**labels[key], "probability": value}
                              for key, value in normalized.items()}
         except (ValueError, TypeError, OverflowError):
             errors.append("class_probabilities 必须覆盖全部类别、有限非负且和为 1，并与 confidence 一致")
@@ -84,10 +101,11 @@ def _map_diagnosis(diagnosis: Any) -> Dict[str, Any]:
         unavailable["contract_errors"] = errors
         return unavailable
     return {"predicted_class": predicted, "confidence": confidence,
-            "predicted_fault": dict(settings.FAULT_LABELS[predicted]),
+            "predicted_fault": dict(labels[predicted]),
             "note": None,
             "class_probabilities": probabilities, "model_available": True,
             "contract_errors": [],
+            "label_schema": label_schema,
             "conclusion_strength": "no_conclusion" if confidence == 0 else ("weak" if confidence < 0.5 else "moderate")}
 
 
@@ -124,7 +142,7 @@ def run_fault_diagnosis(signal: Any, transport: Optional[_Transport] = None,
     if body.get("success") is not True:
         return _common.error_response(["FD 返回 success=false 或缺少有效 success 状态"], duration_ms=duration)
 
-    diagnosis = _map_diagnosis(body.get("diagnosis"))
+    diagnosis = _map_diagnosis(body.get("diagnosis"), cfg.label_schema)
     spectrogram = body.get("spectrogram")
     # Arbitrary raw response fields are not exported; they can contain credentials.
     raw = {"success": True, "diagnosis": diagnosis}
@@ -145,7 +163,9 @@ def run_fault_diagnosis(signal: Any, transport: Optional[_Transport] = None,
     if diagnosis["contract_errors"]:
         return _common.error_response(diagnosis["contract_errors"], data=data, duration_ms=duration)
     warnings = []
-    if not diagnosis["model_available"]:
+    if diagnosis.get("abstained") is True:
+        warnings.append("分类器已执行并主动拒绝本次分类，未输出类别结论；这不同于模型未加载")
+    elif not diagnosis["model_available"]:
         warnings.append("FD 模型未加载，分类能力不可用，不得据此输出确定故障类别")
     elif diagnosis["conclusion_strength"] == "no_conclusion":
         warnings.append("分类置信度为 0，不具备判别力")

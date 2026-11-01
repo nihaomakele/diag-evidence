@@ -1,10 +1,12 @@
 # DiagEvidence
 
+> **Development version: 0.2.0.dev3, not a release.** Adds [feature-drift analysis and an offline envelope/order comparison](docs/feature_drift_and_order_study.md). On the previously unread B operating profile, angular accuracy is 29.17% versus 35.42% for matched time-domain features. No candidate is promoted. Earlier [cross-source evaluation](docs/grouped_and_external_validation.md) also failed; this is unsuitable for operational diagnosis.
+
 [中文](README.md)
 
 A research toolkit for contract checks, conclusion constraints, and replayable evaluation of vibration diagnostic tool workflows. It checks numeric input, calls external classification and retrieval services, validates their contracts, applies a versioned policy, and produces a constrained report with isolated run records.
 
-**v0.1.1 is a research preview.** `high` denotes completion of declared rule checks, not calibrated diagnostic accuracy. No trained classifier, production validation, or unmanned multi-agent coordination algorithm is included.
+**The published v0.1.1 is a research preview; this directory is subsequent development.** `high` denotes completion of declared rule checks, not calibrated accuracy. An optional NumPy baseline is trained from licensed laboratory signals. No production validation or unmanned multi-agent coordination algorithm is included. Healthy is an explicit opt-in class, not an unknown/OOD state.
 
 ## Quick start
 

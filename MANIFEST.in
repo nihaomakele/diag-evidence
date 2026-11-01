@@ -2,16 +2,19 @@ include LICENSE README.md README.en.md CHANGELOG.md CONTRIBUTING.md CODE_OF_COND
 include CITATION.cff DATA_PROVENANCE.md MODEL_CARD.md THIRD_PARTY_NOTICES.md
 include VALIDATION.md
 include requirements*.txt
-recursive-include docs *.md
+recursive-include docs *.md *.json
 recursive-include examples *.py
 recursive-include scripts *.py
 recursive-include diag_evidence/tests *.py
 recursive-include diag_evidence/skills *.md
-global-exclude *.pt *.pth *.safetensors *.bin *.csv *.jsonl *.log *.py[cod]
+recursive-include diag_evidence/benchmarks *.json
+include NEXT_VALIDATION.md
+global-exclude *.pt *.pth *.safetensors *.bin *.mat *.npy *.npz *.csv *.jsonl *.log *.py[cod]
 include examples/synthetic_signal_1025.csv
 global-exclude .env .DS_Store
 prune .github
 prune build
 prune dist
+prune artifacts
 
 include PUBLISHING.md

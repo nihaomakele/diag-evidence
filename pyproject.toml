@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "diag-evidence"
-version = "0.1.1"
+version = "0.2.0.dev3"
 description = "Contract checks, conclusion constraints and replayable evaluation for vibration diagnostic workflows"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -31,6 +31,8 @@ Issues = "https://github.com/nihaomakele/diag-evidence/issues"
 [project.optional-dependencies]
 demo = ["flask>=3,<4"]
 data = ["pandas>=2,<3"]
+benchmark = ["scipy>=1.11,<2"]
+study = ["scipy>=1.11,<2", "scikit-learn>=1.7,<2"]
 plots = ["matplotlib>=3.7,<4", "PyWavelets>=1.4,<2"]
 
 [project.scripts]
@@ -45,3 +47,4 @@ exclude = ["diag_evidence.tests*"]
 
 [tool.setuptools.package-data]
 diag_evidence = ["skills/*.md"]
+"diag_evidence.benchmarks" = ["hust_manifest.json", "hust_holdout_manifest.json", "ottawa_manifest.json", "ottawa_b_manifest.json"]
