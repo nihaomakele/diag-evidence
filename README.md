@@ -1,6 +1,6 @@
 # DiagEvidence
 
-> **开发版：0.2.0.dev3，尚未发版。** 增加[特征偏移分析与转速包络对照](docs/feature_drift_and_order_study.md)。新B条件角域准确率29.17%，低于同窗口时间域35.42%，不替换原基线。此前[独立来源检验](docs/grouped_and_external_validation.md)也未通过；当前模型不适合实际诊断。
+> **开发版：0.2.0.dev4。** 新增[源数据支持范围筛选与两套独立台架验证](docs/source_support_screening.md)：42条HIT-SM记录、三种筛选规则、完整距离与接受记录。自建台架接受错误记录由分数规则的17条降至距离规则的11条，接受总量由20条变为14条。默认配置保持，后续重点为新设备模型适配。已发布版本为v0.1.1。
 
 [English](README.en.md) · [接口](docs/contracts.md) · [校验规则](docs/policy.md) · [验证方法](docs/experiments.md)
 

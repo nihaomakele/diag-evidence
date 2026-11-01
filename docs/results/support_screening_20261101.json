@@ -1,0 +1,2781 @@
+{
+  "format": "support-screen-summary/v1",
+  "version": "0.2.0.dev4",
+  "source_attribution": {
+    "dataset": "HUST bearing: a practical dataset for ball bearing fault diagnosis",
+    "authors": [
+      "Hoang Si Hong",
+      "Nguyen Thuan"
+    ],
+    "doi": "10.17632/cbv7jyx4p9.3",
+    "source_url": "https://data.mendeley.com/datasets/cbv7jyx4p9/3",
+    "license": "CC-BY-4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  "target_attribution": {
+    "dataset": "HIT-SM bearing datasets",
+    "institution": "Sensing and Measurement Laboratory, Harbin Institute of Technology",
+    "repository": "https://github.com/hitwzc/Bearing-datasets",
+    "source_commit": "12e46cd1b4a40f396c2bd6e245be5bafe18b1989",
+    "readme_url": "https://github.com/hitwzc/Bearing-datasets/blob/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/README.md",
+    "paper_doi": "10.1088/1361-6501/ac7941",
+    "source_permission": "README permits anyone to use the datasets for classifying rolling-bearing fault status. Raw files remain upstream.",
+    "data_license_spdx": null
+  },
+  "processing": "Fixed 4096-sample windows, normalized 55 features, frozen HUST classifier, source-record distance screening, per-rig evaluation.",
+  "source_freeze_sha256": "56b4ebbff044fd7978c4674989c0fcc24ee387f74507742a57f0261039d65e61",
+  "checkpoint_sha256": "0aff6191e8a52c67a13c93b598dc1b93cd0465bea81da33772e6bd4b9d1a287e",
+  "source_model_parameter_sha256": "1d2839013882a67e89a7c423bad367f3d9e5d4606debecd941501ea08adbaa9c",
+  "threshold": 14.70838461686537,
+  "calibration_records": 48,
+  "source_role": "development calibration",
+  "target_true_classes": [
+    0,
+    1,
+    3
+  ],
+  "target_records": 42,
+  "target_windows": 1344,
+  "source_calibration": {
+    "raw_windows": {
+      "samples": 1536,
+      "accepted": 1536,
+      "coverage": 1.0,
+      "accepted_error_rate": 0.4166666666666667,
+      "balanced_accuracy_all_outputs": 0.5833333333333333,
+      "accuracy_all_outputs": 0.5833333333333334,
+      "evaluated_true_classes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "confusion_accepted_true_rows": [
+        [
+          125,
+          50,
+          209,
+          0
+        ],
+        [
+          95,
+          94,
+          195,
+          0
+        ],
+        [
+          34,
+          52,
+          298,
+          0
+        ],
+        [
+          2,
+          1,
+          2,
+          379
+        ]
+      ],
+      "class_coverage": {
+        "0": 1.0,
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0
+      },
+      "healthy_coverage": 1.0,
+      "healthy_false_alarm_all_healthy": 0.013020833333333334,
+      "healthy_false_alarm_among_accepted": 0.013020833333333334,
+      "fault_predicted_healthy_all_faults": 0.0
+    },
+    "raw_records": {
+      "samples": 48,
+      "accepted": 48,
+      "coverage": 1.0,
+      "accepted_error_rate": 0.375,
+      "balanced_accuracy_all_outputs": 0.625,
+      "accuracy_all_outputs": 0.625,
+      "evaluated_true_classes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "confusion_accepted_true_rows": [
+        [
+          4,
+          2,
+          6,
+          0
+        ],
+        [
+          3,
+          3,
+          6,
+          0
+        ],
+        [
+          0,
+          1,
+          11,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          12
+        ]
+      ],
+      "class_coverage": {
+        "0": 1.0,
+        "1": 1.0,
+        "2": 1.0,
+        "3": 1.0
+      },
+      "healthy_coverage": 1.0,
+      "healthy_false_alarm_all_healthy": 0.0,
+      "healthy_false_alarm_among_accepted": 0.0,
+      "fault_predicted_healthy_all_faults": 0.0
+    },
+    "arms": {
+      "score_only": {
+        "windows": {
+          "samples": 1536,
+          "accepted": 1510,
+          "coverage": 0.9830729166666666,
+          "accepted_error_rate": 0.4139072847682119,
+          "balanced_accuracy_all_outputs": 0.5833333333333333,
+          "accuracy_all_outputs": 0.5833333333333334,
+          "evaluated_true_classes": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "confusion_accepted_true_rows": [
+            [
+              122,
+              47,
+              203,
+              0
+            ],
+            [
+              95,
+              91,
+              193,
+              0
+            ],
+            [
+              32,
+              52,
+              297,
+              0
+            ],
+            [
+              2,
+              0,
+              1,
+              375
+            ]
+          ],
+          "class_coverage": {
+            "0": 0.96875,
+            "1": 0.9869791666666666,
+            "2": 0.9921875,
+            "3": 0.984375
+          },
+          "healthy_coverage": 0.984375,
+          "healthy_false_alarm_all_healthy": 0.0078125,
+          "healthy_false_alarm_among_accepted": 0.007936507936507936,
+          "fault_predicted_healthy_all_faults": 0.0
+        },
+        "records": {
+          "samples": 48,
+          "accepted": 36,
+          "coverage": 0.75,
+          "accepted_error_rate": 0.3888888888888889,
+          "balanced_accuracy_all_outputs": 0.625,
+          "accuracy_all_outputs": 0.625,
+          "evaluated_true_classes": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "confusion_accepted_true_rows": [
+            [
+              3,
+              2,
+              4,
+              0
+            ],
+            [
+              3,
+              1,
+              4,
+              0
+            ],
+            [
+              0,
+              1,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              9
+            ]
+          ],
+          "class_coverage": {
+            "0": 0.75,
+            "1": 0.6666666666666666,
+            "2": 0.8333333333333334,
+            "3": 0.75
+          },
+          "healthy_coverage": 0.75,
+          "healthy_false_alarm_all_healthy": 0.0,
+          "healthy_false_alarm_among_accepted": 0.0,
+          "fault_predicted_healthy_all_faults": 0.0
+        }
+      },
+      "support_only": {
+        "windows": {
+          "samples": 1536,
+          "accepted": 1528,
+          "coverage": 0.9947916666666666,
+          "accepted_error_rate": 0.418848167539267,
+          "balanced_accuracy_all_outputs": 0.5833333333333333,
+          "accuracy_all_outputs": 0.5833333333333334,
+          "evaluated_true_classes": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "confusion_accepted_true_rows": [
+            [
+              125,
+              50,
+              209,
+              0
+            ],
+            [
+              95,
+              94,
+              195,
+              0
+            ],
+            [
+              34,
+              52,
+              298,
+              0
+            ],
+            [
+              2,
+              1,
+              2,
+              371
+            ]
+          ],
+          "class_coverage": {
+            "0": 1.0,
+            "1": 1.0,
+            "2": 1.0,
+            "3": 0.9791666666666666
+          },
+          "healthy_coverage": 0.9791666666666666,
+          "healthy_false_alarm_all_healthy": 0.013020833333333334,
+          "healthy_false_alarm_among_accepted": 0.013297872340425532,
+          "fault_predicted_healthy_all_faults": 0.0
+        },
+        "records": {
+          "samples": 48,
+          "accepted": 46,
+          "coverage": 0.9583333333333334,
+          "accepted_error_rate": 0.391304347826087,
+          "balanced_accuracy_all_outputs": 0.625,
+          "accuracy_all_outputs": 0.625,
+          "evaluated_true_classes": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "confusion_accepted_true_rows": [
+            [
+              4,
+              2,
+              6,
+              0
+            ],
+            [
+              3,
+              3,
+              6,
+              0
+            ],
+            [
+              0,
+              1,
+              11,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              10
+            ]
+          ],
+          "class_coverage": {
+            "0": 1.0,
+            "1": 1.0,
+            "2": 1.0,
+            "3": 0.8333333333333334
+          },
+          "healthy_coverage": 0.8333333333333334,
+          "healthy_false_alarm_all_healthy": 0.0,
+          "healthy_false_alarm_among_accepted": 0.0,
+          "fault_predicted_healthy_all_faults": 0.0
+        }
+      },
+      "both": {
+        "windows": {
+          "samples": 1536,
+          "accepted": 1502,
+          "coverage": 0.9778645833333334,
+          "accepted_error_rate": 0.41611185086551267,
+          "balanced_accuracy_all_outputs": 0.5833333333333333,
+          "accuracy_all_outputs": 0.5833333333333334,
+          "evaluated_true_classes": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "confusion_accepted_true_rows": [
+            [
+              122,
+              47,
+              203,
+              0
+            ],
+            [
+              95,
+              91,
+              193,
+              0
+            ],
+            [
+              32,
+              52,
+              297,
+              0
+            ],
+            [
+              2,
+              0,
+              1,
+              367
+            ]
+          ],
+          "class_coverage": {
+            "0": 0.96875,
+            "1": 0.9869791666666666,
+            "2": 0.9921875,
+            "3": 0.9635416666666666
+          },
+          "healthy_coverage": 0.9635416666666666,
+          "healthy_false_alarm_all_healthy": 0.0078125,
+          "healthy_false_alarm_among_accepted": 0.008108108108108109,
+          "fault_predicted_healthy_all_faults": 0.0
+        },
+        "records": {
+          "samples": 48,
+          "accepted": 34,
+          "coverage": 0.7083333333333334,
+          "accepted_error_rate": 0.4117647058823529,
+          "balanced_accuracy_all_outputs": 0.625,
+          "accuracy_all_outputs": 0.625,
+          "evaluated_true_classes": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "confusion_accepted_true_rows": [
+            [
+              3,
+              2,
+              4,
+              0
+            ],
+            [
+              3,
+              1,
+              4,
+              0
+            ],
+            [
+              0,
+              1,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              7
+            ]
+          ],
+          "class_coverage": {
+            "0": 0.75,
+            "1": 0.6666666666666666,
+            "2": 0.8333333333333334,
+            "3": 0.5833333333333334
+          },
+          "healthy_coverage": 0.5833333333333334,
+          "healthy_false_alarm_all_healthy": 0.0,
+          "healthy_false_alarm_among_accepted": 0.0,
+          "fault_predicted_healthy_all_faults": 0.0
+        }
+      }
+    },
+    "per_record": [
+      {
+        "record_id": "B500.mat",
+        "label": 2,
+        "prediction": 1,
+        "windows": 32,
+        "maximum_distance": 6.29661497003085,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "B502.mat",
+        "label": 2,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 7.9597938636344665,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "B504.mat",
+        "label": 2,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 6.717274219091015,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "B600.mat",
+        "label": 2,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 6.977921622408118,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "B602.mat",
+        "label": 2,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 6.974882942065704,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "B604.mat",
+        "label": 2,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 7.343376808823652,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "B700.mat",
+        "label": 2,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 6.410503713087325,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "B702.mat",
+        "label": 2,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 7.24238167028697,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "B704.mat",
+        "label": 2,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 7.023543703233108,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "B800.mat",
+        "label": 2,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 9.56459541594724,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 31,
+          "support_only": 32,
+          "both": 31
+        }
+      },
+      {
+        "record_id": "B802.mat",
+        "label": 2,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 8.856479315634559,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 30,
+          "support_only": 32,
+          "both": 30
+        }
+      },
+      {
+        "record_id": "B804.mat",
+        "label": 2,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 10.783698160571237,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "I500.mat",
+        "label": 0,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 8.331168536420984,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "I502.mat",
+        "label": 0,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 9.635564481313045,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "I504.mat",
+        "label": 0,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 11.840469667981095,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "I600.mat",
+        "label": 0,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 7.509379891973698,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 25,
+          "support_only": 32,
+          "both": 25
+        }
+      },
+      {
+        "record_id": "I602.mat",
+        "label": 0,
+        "prediction": 0,
+        "windows": 32,
+        "maximum_distance": 7.685059388927507,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 28,
+          "support_only": 32,
+          "both": 28
+        }
+      },
+      {
+        "record_id": "I604.mat",
+        "label": 0,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 7.017058090576538,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 31,
+          "support_only": 32,
+          "both": 31
+        }
+      },
+      {
+        "record_id": "I700.mat",
+        "label": 0,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 6.984213407038896,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "I702.mat",
+        "label": 0,
+        "prediction": 1,
+        "windows": 32,
+        "maximum_distance": 5.58498465820947,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "I704.mat",
+        "label": 0,
+        "prediction": 1,
+        "windows": 32,
+        "maximum_distance": 5.272921678413148,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "I800.mat",
+        "label": 0,
+        "prediction": 0,
+        "windows": 32,
+        "maximum_distance": 9.843840106372118,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "I802.mat",
+        "label": 0,
+        "prediction": 0,
+        "windows": 32,
+        "maximum_distance": 9.936107483088472,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "I804.mat",
+        "label": 0,
+        "prediction": 0,
+        "windows": 32,
+        "maximum_distance": 9.026293479303671,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "N500.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 15.817498820861802,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": false,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 28,
+          "both": 28
+        }
+      },
+      {
+        "record_id": "N502.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 16.264094952971924,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": false,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 28,
+          "both": 28
+        }
+      },
+      {
+        "record_id": "N504.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 14.70838461686537,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "N600.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 7.433992162121385,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "N602.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 6.868450880026455,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "N604.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 6.880776566056611,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "N700.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 8.24437764926294,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "N702.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 7.078718950683513,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "N704.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 7.3846712884198755,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "N800.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 7.466454614175753,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 30,
+          "support_only": 32,
+          "both": 30
+        }
+      },
+      {
+        "record_id": "N802.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 7.372878313330854,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 31,
+          "support_only": 32,
+          "both": 31
+        }
+      },
+      {
+        "record_id": "N804.mat",
+        "label": 3,
+        "prediction": 3,
+        "windows": 32,
+        "maximum_distance": 7.8342201986224795,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 29,
+          "support_only": 32,
+          "both": 29
+        }
+      },
+      {
+        "record_id": "O500.mat",
+        "label": 1,
+        "prediction": 1,
+        "windows": 32,
+        "maximum_distance": 8.703212346933908,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "O502.mat",
+        "label": 1,
+        "prediction": 1,
+        "windows": 32,
+        "maximum_distance": 8.951595342193867,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 30,
+          "support_only": 32,
+          "both": 30
+        }
+      },
+      {
+        "record_id": "O504.mat",
+        "label": 1,
+        "prediction": 1,
+        "windows": 32,
+        "maximum_distance": 8.741698586511403,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 31,
+          "support_only": 32,
+          "both": 31
+        }
+      },
+      {
+        "record_id": "O600.mat",
+        "label": 1,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 6.645138653279236,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 31,
+          "support_only": 32,
+          "both": 31
+        }
+      },
+      {
+        "record_id": "O602.mat",
+        "label": 1,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 5.554419137868808,
+        "record_accepted": {
+          "score_only": false,
+          "support_only": true,
+          "both": false
+        },
+        "accepted_windows": {
+          "score_only": 31,
+          "support_only": 32,
+          "both": 31
+        }
+      },
+      {
+        "record_id": "O604.mat",
+        "label": 1,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 5.413972107836736,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "O700.mat",
+        "label": 1,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 6.099864436775513,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "O702.mat",
+        "label": 1,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 6.664523655072395,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "O704.mat",
+        "label": 1,
+        "prediction": 2,
+        "windows": 32,
+        "maximum_distance": 7.161287433187118,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "O800.mat",
+        "label": 1,
+        "prediction": 0,
+        "windows": 32,
+        "maximum_distance": 7.039170579116866,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "O802.mat",
+        "label": 1,
+        "prediction": 0,
+        "windows": 32,
+        "maximum_distance": 7.383929279460364,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      },
+      {
+        "record_id": "O804.mat",
+        "label": 1,
+        "prediction": 0,
+        "windows": 32,
+        "maximum_distance": 6.284699856743849,
+        "record_accepted": {
+          "score_only": true,
+          "support_only": true,
+          "both": true
+        },
+        "accepted_windows": {
+          "score_only": 32,
+          "support_only": 32,
+          "both": 32
+        }
+      }
+    ]
+  },
+  "target_metrics": {
+    "selfbuilt": {
+      "raw_windows": {
+        "samples": 672,
+        "accepted": 672,
+        "coverage": 1.0,
+        "accepted_error_rate": 0.8497023809523809,
+        "balanced_accuracy_all_outputs": 0.3391203703703704,
+        "accuracy_all_outputs": 0.15029761904761904,
+        "evaluated_true_classes": [
+          0,
+          1,
+          3
+        ],
+        "confusion_accepted_true_rows": [
+          [
+            0,
+            2,
+            190,
+            96
+          ],
+          [
+            0,
+            5,
+            176,
+            107
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            96
+          ]
+        ],
+        "class_coverage": {
+          "0": 1.0,
+          "1": 1.0,
+          "3": 1.0
+        },
+        "healthy_coverage": 1.0,
+        "healthy_false_alarm_all_healthy": 0.0,
+        "healthy_false_alarm_among_accepted": 0.0,
+        "fault_predicted_healthy_all_faults": 0.3524305555555556
+      },
+      "raw_records": {
+        "samples": 21,
+        "accepted": 21,
+        "coverage": 1.0,
+        "accepted_error_rate": 0.8571428571428571,
+        "balanced_accuracy_all_outputs": 0.3333333333333333,
+        "accuracy_all_outputs": 0.14285714285714285,
+        "evaluated_true_classes": [
+          0,
+          1,
+          3
+        ],
+        "confusion_accepted_true_rows": [
+          [
+            0,
+            0,
+            6,
+            3
+          ],
+          [
+            0,
+            0,
+            6,
+            3
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            3
+          ]
+        ],
+        "class_coverage": {
+          "0": 1.0,
+          "1": 1.0,
+          "3": 1.0
+        },
+        "healthy_coverage": 1.0,
+        "healthy_false_alarm_all_healthy": 0.0,
+        "healthy_false_alarm_among_accepted": 0.0,
+        "fault_predicted_healthy_all_faults": 0.3333333333333333
+      },
+      "arms": {
+        "score_only": {
+          "windows": {
+            "samples": 672,
+            "accepted": 667,
+            "coverage": 0.9925595238095238,
+            "accepted_error_rate": 0.8500749625187406,
+            "balanced_accuracy_all_outputs": 0.3391203703703704,
+            "accuracy_all_outputs": 0.15029761904761904,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                0,
+                2,
+                190,
+                96
+              ],
+              [
+                0,
+                4,
+                175,
+                104
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                96
+              ]
+            ],
+            "class_coverage": {
+              "0": 1.0,
+              "1": 0.9826388888888888,
+              "3": 1.0
+            },
+            "healthy_coverage": 1.0,
+            "healthy_false_alarm_all_healthy": 0.0,
+            "healthy_false_alarm_among_accepted": 0.0,
+            "fault_predicted_healthy_all_faults": 0.3472222222222222
+          },
+          "records": {
+            "samples": 21,
+            "accepted": 20,
+            "coverage": 0.9523809523809523,
+            "accepted_error_rate": 0.85,
+            "balanced_accuracy_all_outputs": 0.3333333333333333,
+            "accuracy_all_outputs": 0.14285714285714285,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                0,
+                0,
+                6,
+                3
+              ],
+              [
+                0,
+                0,
+                5,
+                3
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                3
+              ]
+            ],
+            "class_coverage": {
+              "0": 1.0,
+              "1": 0.8888888888888888,
+              "3": 1.0
+            },
+            "healthy_coverage": 1.0,
+            "healthy_false_alarm_all_healthy": 0.0,
+            "healthy_false_alarm_among_accepted": 0.0,
+            "fault_predicted_healthy_all_faults": 0.3333333333333333
+          }
+        },
+        "support_only": {
+          "windows": {
+            "samples": 672,
+            "accepted": 476,
+            "coverage": 0.7083333333333334,
+            "accepted_error_rate": 0.7878151260504201,
+            "balanced_accuracy_all_outputs": 0.3391203703703704,
+            "accuracy_all_outputs": 0.15029761904761904,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                0,
+                2,
+                190,
+                0
+              ],
+              [
+                0,
+                5,
+                172,
+                11
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                96
+              ]
+            ],
+            "class_coverage": {
+              "0": 0.6666666666666666,
+              "1": 0.6527777777777778,
+              "3": 1.0
+            },
+            "healthy_coverage": 1.0,
+            "healthy_false_alarm_all_healthy": 0.0,
+            "healthy_false_alarm_among_accepted": 0.0,
+            "fault_predicted_healthy_all_faults": 0.019097222222222224
+          },
+          "records": {
+            "samples": 21,
+            "accepted": 14,
+            "coverage": 0.6666666666666666,
+            "accepted_error_rate": 0.7857142857142857,
+            "balanced_accuracy_all_outputs": 0.3333333333333333,
+            "accuracy_all_outputs": 0.14285714285714285,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                0,
+                0,
+                6,
+                0
+              ],
+              [
+                0,
+                0,
+                5,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                3
+              ]
+            ],
+            "class_coverage": {
+              "0": 0.6666666666666666,
+              "1": 0.5555555555555556,
+              "3": 1.0
+            },
+            "healthy_coverage": 1.0,
+            "healthy_false_alarm_all_healthy": 0.0,
+            "healthy_false_alarm_among_accepted": 0.0,
+            "fault_predicted_healthy_all_faults": 0.0
+          }
+        },
+        "both": {
+          "windows": {
+            "samples": 672,
+            "accepted": 471,
+            "coverage": 0.7008928571428571,
+            "accepted_error_rate": 0.7876857749469215,
+            "balanced_accuracy_all_outputs": 0.3391203703703704,
+            "accuracy_all_outputs": 0.15029761904761904,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                0,
+                2,
+                190,
+                0
+              ],
+              [
+                0,
+                4,
+                171,
+                8
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                96
+              ]
+            ],
+            "class_coverage": {
+              "0": 0.6666666666666666,
+              "1": 0.6354166666666666,
+              "3": 1.0
+            },
+            "healthy_coverage": 1.0,
+            "healthy_false_alarm_all_healthy": 0.0,
+            "healthy_false_alarm_among_accepted": 0.0,
+            "fault_predicted_healthy_all_faults": 0.013888888888888888
+          },
+          "records": {
+            "samples": 21,
+            "accepted": 13,
+            "coverage": 0.6190476190476191,
+            "accepted_error_rate": 0.7692307692307693,
+            "balanced_accuracy_all_outputs": 0.3333333333333333,
+            "accuracy_all_outputs": 0.14285714285714285,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                0,
+                0,
+                6,
+                0
+              ],
+              [
+                0,
+                0,
+                4,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                3
+              ]
+            ],
+            "class_coverage": {
+              "0": 0.6666666666666666,
+              "1": 0.4444444444444444,
+              "3": 1.0
+            },
+            "healthy_coverage": 1.0,
+            "healthy_false_alarm_all_healthy": 0.0,
+            "healthy_false_alarm_among_accepted": 0.0,
+            "fault_predicted_healthy_all_faults": 0.0
+          }
+        }
+      },
+      "per_record": [
+        {
+          "record_id": "selfbuilt__IR2_1200.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 11.254517835702638,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__IR2_600.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 13.172438182415357,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__IR2_900.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 11.187678364211171,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__IR5_1200.mat",
+          "label": 0,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 30.894210378991225,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 0,
+            "both": 0
+          }
+        },
+        {
+          "record_id": "selfbuilt__IR5_600.mat",
+          "label": 0,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 37.92329656773724,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 0,
+            "both": 0
+          }
+        },
+        {
+          "record_id": "selfbuilt__IR5_900.mat",
+          "label": 0,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 30.714246244170596,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 0,
+            "both": 0
+          }
+        },
+        {
+          "record_id": "selfbuilt__IR8_1200.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 8.684584381939084,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__IR8_600.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 13.351857425963123,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__IR8_900.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 8.350133140729048,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__Normal_1200.mat",
+          "label": 3,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 9.714684466386496,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__Normal_600.mat",
+          "label": 3,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 10.19639657490848,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__Normal_900.mat",
+          "label": 3,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 9.992569796222824,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__OR2_1200.mat",
+          "label": 1,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 10.867306610803952,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__OR2_600.mat",
+          "label": 1,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 14.890011869850776,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 28,
+            "both": 28
+          }
+        },
+        {
+          "record_id": "selfbuilt__OR2_900.mat",
+          "label": 1,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 11.801594549295777,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__OR5_1200.mat",
+          "label": 1,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 25.39904784443733,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 0,
+            "both": 0
+          }
+        },
+        {
+          "record_id": "selfbuilt__OR5_600.mat",
+          "label": 1,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 30.49946061808309,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 0,
+            "both": 0
+          }
+        },
+        {
+          "record_id": "selfbuilt__OR5_900.mat",
+          "label": 1,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 25.51724382068209,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 0,
+            "both": 0
+          }
+        },
+        {
+          "record_id": "selfbuilt__OR8_1200.mat",
+          "label": 1,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 8.138880742387375,
+          "record_accepted": {
+            "score_only": false,
+            "support_only": true,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 27,
+            "support_only": 32,
+            "both": 27
+          }
+        },
+        {
+          "record_id": "selfbuilt__OR8_600.mat",
+          "label": 1,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 13.310506240243908,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "selfbuilt__OR8_900.mat",
+          "label": 1,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 9.693077688654443,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        }
+      ]
+    },
+    "spectraquest": {
+      "raw_windows": {
+        "samples": 672,
+        "accepted": 672,
+        "coverage": 1.0,
+        "accepted_error_rate": 0.9627976190476191,
+        "balanced_accuracy_all_outputs": 0.028935185185185185,
+        "accuracy_all_outputs": 0.03720238095238095,
+        "evaluated_true_classes": [
+          0,
+          1,
+          3
+        ],
+        "confusion_accepted_true_rows": [
+          [
+            4,
+            39,
+            221,
+            24
+          ],
+          [
+            0,
+            21,
+            10,
+            257
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            32,
+            64,
+            0,
+            0
+          ]
+        ],
+        "class_coverage": {
+          "0": 1.0,
+          "1": 1.0,
+          "3": 1.0
+        },
+        "healthy_coverage": 1.0,
+        "healthy_false_alarm_all_healthy": 1.0,
+        "healthy_false_alarm_among_accepted": 1.0,
+        "fault_predicted_healthy_all_faults": 0.4878472222222222
+      },
+      "raw_records": {
+        "samples": 21,
+        "accepted": 21,
+        "coverage": 1.0,
+        "accepted_error_rate": 0.9523809523809523,
+        "balanced_accuracy_all_outputs": 0.037037037037037035,
+        "accuracy_all_outputs": 0.047619047619047616,
+        "evaluated_true_classes": [
+          0,
+          1,
+          3
+        ],
+        "confusion_accepted_true_rows": [
+          [
+            0,
+            1,
+            8,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            8
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            2,
+            0,
+            0
+          ]
+        ],
+        "class_coverage": {
+          "0": 1.0,
+          "1": 1.0,
+          "3": 1.0
+        },
+        "healthy_coverage": 1.0,
+        "healthy_false_alarm_all_healthy": 1.0,
+        "healthy_false_alarm_among_accepted": 1.0,
+        "fault_predicted_healthy_all_faults": 0.4444444444444444
+      },
+      "arms": {
+        "score_only": {
+          "windows": {
+            "samples": 672,
+            "accepted": 662,
+            "coverage": 0.9851190476190477,
+            "accepted_error_rate": 0.9637462235649547,
+            "balanced_accuracy_all_outputs": 0.028935185185185185,
+            "accuracy_all_outputs": 0.03720238095238095,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                4,
+                36,
+                218,
+                22
+              ],
+              [
+                0,
+                20,
+                10,
+                256
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                32,
+                64,
+                0,
+                0
+              ]
+            ],
+            "class_coverage": {
+              "0": 0.9722222222222222,
+              "1": 0.9930555555555556,
+              "3": 1.0
+            },
+            "healthy_coverage": 1.0,
+            "healthy_false_alarm_all_healthy": 1.0,
+            "healthy_false_alarm_among_accepted": 1.0,
+            "fault_predicted_healthy_all_faults": 0.4826388888888889
+          },
+          "records": {
+            "samples": 21,
+            "accepted": 15,
+            "coverage": 0.7142857142857143,
+            "accepted_error_rate": 1.0,
+            "balanced_accuracy_all_outputs": 0.037037037037037035,
+            "accuracy_all_outputs": 0.047619047619047616,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                0,
+                0,
+                4,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                8
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                1,
+                2,
+                0,
+                0
+              ]
+            ],
+            "class_coverage": {
+              "0": 0.4444444444444444,
+              "1": 0.8888888888888888,
+              "3": 1.0
+            },
+            "healthy_coverage": 1.0,
+            "healthy_false_alarm_all_healthy": 1.0,
+            "healthy_false_alarm_among_accepted": 1.0,
+            "fault_predicted_healthy_all_faults": 0.4444444444444444
+          }
+        },
+        "support_only": {
+          "windows": {
+            "samples": 672,
+            "accepted": 514,
+            "coverage": 0.7648809523809523,
+            "accepted_error_rate": 0.953307392996109,
+            "balanced_accuracy_all_outputs": 0.028935185185185185,
+            "accuracy_all_outputs": 0.03720238095238095,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                3,
+                39,
+                221,
+                24
+              ],
+              [
+                0,
+                21,
+                10,
+                131
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                1,
+                64,
+                0,
+                0
+              ]
+            ],
+            "class_coverage": {
+              "0": 0.9965277777777778,
+              "1": 0.5625,
+              "3": 0.6770833333333334
+            },
+            "healthy_coverage": 0.6770833333333334,
+            "healthy_false_alarm_all_healthy": 0.6770833333333334,
+            "healthy_false_alarm_among_accepted": 1.0,
+            "fault_predicted_healthy_all_faults": 0.2690972222222222
+          },
+          "records": {
+            "samples": 21,
+            "accepted": 13,
+            "coverage": 0.6190476190476191,
+            "accepted_error_rate": 0.9230769230769231,
+            "balanced_accuracy_all_outputs": 0.037037037037037035,
+            "accuracy_all_outputs": 0.047619047619047616,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                0,
+                0,
+                8,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                2
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                2,
+                0,
+                0
+              ]
+            ],
+            "class_coverage": {
+              "0": 0.8888888888888888,
+              "1": 0.3333333333333333,
+              "3": 0.6666666666666666
+            },
+            "healthy_coverage": 0.6666666666666666,
+            "healthy_false_alarm_all_healthy": 0.6666666666666666,
+            "healthy_false_alarm_among_accepted": 1.0,
+            "fault_predicted_healthy_all_faults": 0.1111111111111111
+          }
+        },
+        "both": {
+          "windows": {
+            "samples": 672,
+            "accepted": 504,
+            "coverage": 0.75,
+            "accepted_error_rate": 0.9543650793650794,
+            "balanced_accuracy_all_outputs": 0.028935185185185185,
+            "accuracy_all_outputs": 0.03720238095238095,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                3,
+                36,
+                218,
+                22
+              ],
+              [
+                0,
+                20,
+                10,
+                130
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                1,
+                64,
+                0,
+                0
+              ]
+            ],
+            "class_coverage": {
+              "0": 0.96875,
+              "1": 0.5555555555555556,
+              "3": 0.6770833333333334
+            },
+            "healthy_coverage": 0.6770833333333334,
+            "healthy_false_alarm_all_healthy": 0.6770833333333334,
+            "healthy_false_alarm_among_accepted": 1.0,
+            "fault_predicted_healthy_all_faults": 0.2638888888888889
+          },
+          "records": {
+            "samples": 21,
+            "accepted": 8,
+            "coverage": 0.38095238095238093,
+            "accepted_error_rate": 1.0,
+            "balanced_accuracy_all_outputs": 0.037037037037037035,
+            "accuracy_all_outputs": 0.047619047619047616,
+            "evaluated_true_classes": [
+              0,
+              1,
+              3
+            ],
+            "confusion_accepted_true_rows": [
+              [
+                0,
+                0,
+                4,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                2
+              ],
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                2,
+                0,
+                0
+              ]
+            ],
+            "class_coverage": {
+              "0": 0.4444444444444444,
+              "1": 0.2222222222222222,
+              "3": 0.6666666666666666
+            },
+            "healthy_coverage": 0.6666666666666666,
+            "healthy_false_alarm_all_healthy": 0.6666666666666666,
+            "healthy_false_alarm_among_accepted": 1.0,
+            "fault_predicted_healthy_all_faults": 0.1111111111111111
+          }
+        }
+      },
+      "per_record": [
+        {
+          "record_id": "spectraquest__IR2_1200.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 13.084154034908938,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "spectraquest__IR2_600.mat",
+          "label": 0,
+          "prediction": 1,
+          "windows": 32,
+          "maximum_distance": 15.096109555476136,
+          "record_accepted": {
+            "score_only": false,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 31,
+            "support_only": 31,
+            "both": 30
+          }
+        },
+        {
+          "record_id": "spectraquest__IR2_900.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 12.357260326181805,
+          "record_accepted": {
+            "score_only": false,
+            "support_only": true,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 30,
+            "support_only": 32,
+            "both": 30
+          }
+        },
+        {
+          "record_id": "spectraquest__IR5_1200.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 10.76486432063423,
+          "record_accepted": {
+            "score_only": false,
+            "support_only": true,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 31,
+            "support_only": 32,
+            "both": 31
+          }
+        },
+        {
+          "record_id": "spectraquest__IR5_600.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 13.506476781784833,
+          "record_accepted": {
+            "score_only": false,
+            "support_only": true,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 29,
+            "support_only": 32,
+            "both": 29
+          }
+        },
+        {
+          "record_id": "spectraquest__IR5_900.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 11.988367580763661,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "spectraquest__IR8_1200.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 10.014257114710938,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "spectraquest__IR8_600.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 11.698295333267893,
+          "record_accepted": {
+            "score_only": false,
+            "support_only": true,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 31,
+            "support_only": 32,
+            "both": 31
+          }
+        },
+        {
+          "record_id": "spectraquest__IR8_900.mat",
+          "label": 0,
+          "prediction": 2,
+          "windows": 32,
+          "maximum_distance": 9.363241050423614,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "spectraquest__Normal_1200.mat",
+          "label": 3,
+          "prediction": 1,
+          "windows": 32,
+          "maximum_distance": 12.229162812049573,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "spectraquest__Normal_600.mat",
+          "label": 3,
+          "prediction": 0,
+          "windows": 32,
+          "maximum_distance": 15.775661351359181,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 1,
+            "both": 1
+          }
+        },
+        {
+          "record_id": "spectraquest__Normal_900.mat",
+          "label": 3,
+          "prediction": 1,
+          "windows": 32,
+          "maximum_distance": 14.390256745527624,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "spectraquest__OR2_1200.mat",
+          "label": 1,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 13.068898608336672,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "spectraquest__OR2_600.mat",
+          "label": 1,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 15.620623846038631,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 25,
+            "both": 25
+          }
+        },
+        {
+          "record_id": "spectraquest__OR2_900.mat",
+          "label": 1,
+          "prediction": 1,
+          "windows": 32,
+          "maximum_distance": 13.529394005447513,
+          "record_accepted": {
+            "score_only": false,
+            "support_only": true,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 30,
+            "support_only": 32,
+            "both": 30
+          }
+        },
+        {
+          "record_id": "spectraquest__OR5_1200.mat",
+          "label": 1,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 14.448797144498332,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": true,
+            "both": true
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 32,
+            "both": 32
+          }
+        },
+        {
+          "record_id": "spectraquest__OR5_600.mat",
+          "label": 1,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 18.22557770831344,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 18,
+            "both": 18
+          }
+        },
+        {
+          "record_id": "spectraquest__OR5_900.mat",
+          "label": 1,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 16.859493843830325,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 23,
+            "both": 23
+          }
+        },
+        {
+          "record_id": "spectraquest__OR8_1200.mat",
+          "label": 1,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 16.42635713802156,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 0,
+            "both": 0
+          }
+        },
+        {
+          "record_id": "spectraquest__OR8_600.mat",
+          "label": 1,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 17.400991256095843,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 0,
+            "both": 0
+          }
+        },
+        {
+          "record_id": "spectraquest__OR8_900.mat",
+          "label": 1,
+          "prediction": 3,
+          "windows": 32,
+          "maximum_distance": 17.389638795418318,
+          "record_accepted": {
+            "score_only": true,
+            "support_only": false,
+            "both": false
+          },
+          "accepted_windows": {
+            "score_only": 32,
+            "support_only": 0,
+            "both": 0
+          }
+        }
+      ]
+    }
+  },
+  "default_promoted": false,
+  "engineering_checks": {
+    "local_tests": 308,
+    "new_tests": 20,
+    "independent_checks": 26
+  }
+}

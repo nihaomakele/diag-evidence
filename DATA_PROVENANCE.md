@@ -1,5 +1,7 @@
 # 发布资产与来源
 
+0.2.0.dev4增加哈工大传感与测量实验室的[HIT-SM来源清单](https://github.com/hitwzc/Bearing-datasets)，固定提交`12e46cd1b4a40f396c2bd6e245be5bafe18b1989`，两套实验台42文件、73,110,112字节。README允许将数据用于轴承故障状态分类；清单保留该说明，数据许可SPDX标识留空。源码MIT适用于代码，原始信号通过上游获取。处理包括非重叠取窗、55维归一化特征、冻结模型推理和源记录距离筛选。公开派生统计保留机构、论文DOI、固定来源与处理说明，详见[支持范围研究](docs/source_support_screening.md)。
+
 0.2.0.dev3另固定同一渥太华v2的B减速条件15文件，199,528,393字节，数据作者、DOI及CC BY 4.0许可不变。该条件读取前已冻结新方法、HUST训练参数及选择文件；它是同设备条件留出，不是新设备验证。新增处理为Channel_2编码器解码、抗混叠重采样、离线双向包络滤波和按转数对齐。A/B清单仅修正旧流程沿用的编码器描述，原始文件、SHA与预测不变。派生汇总见[研究说明](docs/feature_drift_and_order_study.md)与[带署名的结果摘要](docs/results/envelope_order_20261101.json)；代码不分发原始MAT、波形特征矩阵或学习参数，也不暗示数据作者认可本结果。
 
 0.2.0.dev2新增渥太华大学Huan Huang、Natalie Baddour的Bearing Vibration Data under Time-varying Rotational Speed Conditions v2（DOI 10.17632/v43hmbwxpm.2，CC BY 4.0），固定A条件15个文件的地址、字节数及SHA256清单。原始MAT不随源码分发。处理为Channel_1抗混叠重采样200kHz至51.2kHz、取窗、去均值/RMS归一化及冻结HUST模型推理，无目标数据训练或调阈值。分享派生产物保留两份数据作者、版本、许可及处理说明，不暗示原作者认可结果。详见[分组与跨来源说明](docs/grouped_and_external_validation.md)。

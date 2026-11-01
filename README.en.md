@@ -1,6 +1,6 @@
 # DiagEvidence
 
-> **Development version: 0.2.0.dev3, not a release.** Adds [feature-drift analysis and an offline envelope/order comparison](docs/feature_drift_and_order_study.md). On the previously unread B operating profile, angular accuracy is 29.17% versus 35.42% for matched time-domain features. No candidate is promoted. Earlier [cross-source evaluation](docs/grouped_and_external_validation.md) also failed; this is unsuitable for operational diagnosis.
+> **Development version: 0.2.0.dev4.** Adds [source-record support screening on two independent HIT-SM rigs](docs/source_support_screening.md): 42 recordings, three acceptance rules and complete distance/decision records. On the self-built rig, distance screening retains 14 records with 11 errors, versus 20 records with 17 errors for score screening. The default configuration is preserved; device-specific adaptation is the next priority. The released version remains v0.1.1.
 
 [中文](README.md)
 

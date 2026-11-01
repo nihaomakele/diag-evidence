@@ -2,6 +2,17 @@
 
 This file records changes to the public research-preview source tree.
 
+## 0.2.0.dev4 — Record support screening
+
+- Add source-only record-median support prototypes and a fixed threshold from
+  48 leave-type-out record maxima; preserve the existing frozen classifier.
+- Add pinned HIT-SM source metadata, bounded binary API download support and
+  vector-layout validation for 42 recordings from two independent rigs.
+- Compare score, distance and joint screening at window and record levels,
+  with complete decision traces, attributed results and 20 additional tests.
+- Retain the default configuration and prioritize device-specific validation
+  and adaptation based on the measured retained counts and errors.
+
 ## 0.2.0.dev3 — Development, not released
 
 - Add source-only drift intervals and exact linear healthy-margin decomposition;

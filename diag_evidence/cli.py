@@ -63,12 +63,33 @@ def main(argv=None) -> int:
     order_eval.add_argument("--output-dir", type=Path, required=True)
     order_eval.add_argument("--profile", choices=["A", "B"], required=True)
     order_eval.add_argument("--download", action="store_true")
+    support = commands.add_parser("study-support", help="Freeze source-record support screening")
+    support.add_argument("--cache-dir", type=Path, required=True)
+    support.add_argument("--model-dir", type=Path, required=True)
+    support.add_argument("--output-dir", type=Path, required=True)
+    hit = commands.add_parser("evaluate-hit", help="Evaluate frozen screening on two HIT-SM rigs")
+    hit.add_argument("--selection-dir", type=Path, required=True)
+    hit.add_argument("--cache-dir", type=Path, required=True)
+    hit.add_argument("--output-dir", type=Path, required=True)
+    hit.add_argument("--download", action="store_true")
     for command in (demo, evaluation, references, run):
         command.add_argument("--output-dir", type=Path, default=Path("artifacts"))
         command.add_argument("--no-write", action="store_true", help="Disable all artifact and log writes")
     args = parser.parse_args(argv)
     try:
-        if args.command == "study-envelope-order":
+        if args.command == "study-support":
+            from .benchmarks.support_study import run_support_study
+            summary = run_support_study(args.cache_dir, args.model_dir, args.output_dir)
+            result = {"selection_path": str(args.output_dir / "frozen_selection.json"),
+                      "support_threshold": summary["calibration"]["threshold"]}
+            exit_code = 0
+        elif args.command == "evaluate-hit":
+            from .benchmarks.support_study import evaluate_hit_support
+            summary = evaluate_hit_support(args.selection_dir, args.cache_dir, args.output_dir, download=args.download)
+            result = {"metrics_path": str(args.output_dir / "metrics.json"),
+                      "rigs": list(summary), "default_promoted": False}
+            exit_code = 0
+        elif args.command == "study-envelope-order":
             from .benchmarks.order_study import run_order_development
             summary = run_order_development(args.cache_dir, args.output_dir, args.legacy_selection_dir)
             result = {"selection_path": str(args.output_dir / "frozen_selection.json"),
