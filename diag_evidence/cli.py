@@ -12,6 +12,7 @@ from .agent import DiagnosisAgent
 from .demo import SCENARIOS, evaluate
 from .reference_demo import evaluate_references
 from .haconfig.settings import Settings
+from .patrol.scenarios import SCENARIOS as PATROL_SCENARIOS
 
 
 def _reject_constant(value):
@@ -29,6 +30,21 @@ def main(argv=None) -> int:
     parser = _SafeArgumentParser(prog="diag-evidence", description="Diagnostic evidence workflow research toolkit")
     parser.add_argument("--version", action="version", version=__version__)
     commands = parser.add_subparsers(dest="command", required=True)
+    patrol = commands.add_parser('patrol-demo', help='Run online patrol and export an offline interactive replay')
+    patrol_input = patrol.add_mutually_exclusive_group()
+    patrol_input.add_argument('--scenario', choices=PATROL_SCENARIOS, default='mixed')
+    patrol_input.add_argument('--config', type=Path, help='Custom patrol mission JSON')
+    patrol.add_argument('--seed', type=int, default=7)
+    patrol.add_argument('--allocator', choices=['greedy', 'matching'], default='matching')
+    patrol.add_argument('--output-dir', type=Path, default=Path('artifacts/patrol'))
+    patrol.add_argument('--no-write', action='store_true')
+    patrol_eval = commands.add_parser('patrol-evaluate', help='Paired fleet evaluation with fixed development/held-out seeds')
+    patrol_eval.add_argument('--split', choices=['development', 'held_out'], default='development')
+    patrol_eval.add_argument('--freeze', type=Path)
+    patrol_eval.add_argument('--output-dir', type=Path, required=True)
+    patrol_freeze = commands.add_parser('patrol-freeze', help='Freeze patrol source and experiment settings')
+    patrol_freeze.add_argument('--development-dir', type=Path)
+    patrol_freeze.add_argument('--output', type=Path, required=True)
     demo = commands.add_parser("demo", help="Run synthetic offline contract scenarios")
     demo.add_argument("--scenario", choices=["all"] + [s.name for s in SCENARIOS], default="consistent")
     evaluation = commands.add_parser("evaluate", help="Run the full synthetic failure suite")
@@ -77,7 +93,27 @@ def main(argv=None) -> int:
         command.add_argument("--no-write", action="store_true", help="Disable all artifact and log writes")
     args = parser.parse_args(argv)
     try:
-        if args.command == "study-support":
+        if args.command == 'patrol-demo':
+            from .patrol.demo import run_demo
+            from .patrol.scenarios import make_scenario
+            from .patrol.models import scenario_from_dict
+            scenario = (scenario_from_dict(json.loads(args.config.read_text(), parse_constant=_reject_constant))
+                        if args.config else make_scenario(args.scenario, args.seed))
+            result = run_demo(scenario, args.output_dir, allocator=args.allocator, write=not args.no_write)
+            exit_code = 0
+        elif args.command == 'patrol-evaluate':
+            from .patrol.evaluation import evaluate_suite
+            summary = evaluate_suite(args.output_dir, split=args.split, freeze_path=args.freeze)
+            result = {'episodes': summary['episodes'], 'split': summary['split'],
+                      'summary_path': str(args.output_dir / 'summary.json'), 'collision_count': summary['collision_count']}
+            exit_code = 0
+        elif args.command == 'patrol-freeze':
+            from .patrol.evaluation import freeze_experiment
+            development = json.loads((args.development_dir / 'summary.json').read_text()) if args.development_dir else None
+            summary = freeze_experiment(args.output, development)
+            result = {'freeze_path': str(args.output), 'frozen_at': summary['frozen_at']}
+            exit_code = 0
+        elif args.command == "study-support":
             from .benchmarks.support_study import run_support_study
             summary = run_support_study(args.cache_dir, args.model_dir, args.output_dir)
             result = {"selection_path": str(args.output_dir / "frozen_selection.json"),

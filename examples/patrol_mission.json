@@ -1,0 +1,262 @@
+{
+  "name": "mixed",
+  "mission": "patrol-7",
+  "grid": {
+    "width": 18,
+    "height": 12,
+    "blocked": [
+      [
+        6,
+        2
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        6,
+        6
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        6,
+        9
+      ],
+      [
+        11,
+        2
+      ],
+      [
+        11,
+        3
+      ],
+      [
+        11,
+        6
+      ],
+      [
+        11,
+        7
+      ],
+      [
+        11,
+        9
+      ]
+    ]
+  },
+  "robots": [
+    {
+      "id": "R0",
+      "home": [
+        1,
+        1
+      ],
+      "battery": 110
+    },
+    {
+      "id": "R1",
+      "home": [
+        2,
+        1
+      ],
+      "battery": 110
+    },
+    {
+      "id": "R2",
+      "home": [
+        3,
+        1
+      ],
+      "battery": 110
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T0",
+      "cell": [
+        15,
+        9
+      ],
+      "release": 0,
+      "deadline": 67,
+      "service": 2,
+      "priority": 1,
+      "revision": 1
+    },
+    {
+      "id": "T1",
+      "cell": [
+        5,
+        10
+      ],
+      "release": 0,
+      "deadline": 71,
+      "service": 3,
+      "priority": 2,
+      "revision": 1
+    },
+    {
+      "id": "T2",
+      "cell": [
+        4,
+        9
+      ],
+      "release": 0,
+      "deadline": 75,
+      "service": 2,
+      "priority": 3,
+      "revision": 1
+    },
+    {
+      "id": "T3",
+      "cell": [
+        10,
+        10
+      ],
+      "release": 0,
+      "deadline": 79,
+      "service": 3,
+      "priority": 1,
+      "revision": 1
+    },
+    {
+      "id": "T4",
+      "cell": [
+        9,
+        6
+      ],
+      "release": 12,
+      "deadline": 83,
+      "service": 2,
+      "priority": 2,
+      "revision": 1
+    },
+    {
+      "id": "T5",
+      "cell": [
+        2,
+        5
+      ],
+      "release": 17,
+      "deadline": 87,
+      "service": 3,
+      "priority": 3,
+      "revision": 1
+    },
+    {
+      "id": "T6",
+      "cell": [
+        14,
+        6
+      ],
+      "release": 22,
+      "deadline": 91,
+      "service": 2,
+      "priority": 1,
+      "revision": 1
+    },
+    {
+      "id": "T7",
+      "cell": [
+        15,
+        6
+      ],
+      "release": 27,
+      "deadline": 95,
+      "service": 3,
+      "priority": 2,
+      "revision": 1
+    }
+  ],
+  "observations": [
+    {
+      "mission": "previous-mission",
+      "task": "T4",
+      "revision": 0,
+      "state": "completed",
+      "observed_at": -15,
+      "available_at": 0,
+      "origin": "R0",
+      "record": "old-4",
+      "relay": ""
+    },
+    {
+      "mission": "previous-mission",
+      "task": "T5",
+      "revision": 0,
+      "state": "completed",
+      "observed_at": -15,
+      "available_at": 0,
+      "origin": "R0",
+      "record": "old-5",
+      "relay": ""
+    },
+    {
+      "mission": "patrol-7",
+      "task": "T0",
+      "revision": 1,
+      "state": "pending",
+      "observed_at": 0,
+      "available_at": 0,
+      "origin": "R0",
+      "record": "replayed",
+      "relay": ""
+    },
+    {
+      "mission": "patrol-7",
+      "task": "T0",
+      "revision": 1,
+      "state": "pending",
+      "observed_at": 0,
+      "available_at": 1,
+      "origin": "R0",
+      "record": "replayed",
+      "relay": "R1"
+    },
+    {
+      "mission": "patrol-7",
+      "task": "T0",
+      "revision": 1,
+      "state": "completed",
+      "observed_at": 5,
+      "available_at": 5,
+      "origin": "R0",
+      "record": "replayed",
+      "relay": "R2"
+    },
+    {
+      "mission": "patrol-7",
+      "task": "T1",
+      "revision": 1,
+      "state": "pending",
+      "observed_at": 0,
+      "available_at": 0,
+      "origin": "R0",
+      "record": "pending-observation",
+      "relay": ""
+    },
+    {
+      "mission": "patrol-7",
+      "task": "T1",
+      "revision": 1,
+      "state": "completed",
+      "observed_at": 0,
+      "available_at": 0,
+      "origin": "R1",
+      "record": "conflicting-observation",
+      "relay": ""
+    }
+  ],
+  "outages": [
+    [
+      "R0",
+      8,
+      24
+    ]
+  ],
+  "horizon": 100,
+  "report_delay": 0
+}

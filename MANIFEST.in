@@ -8,9 +8,11 @@ recursive-include scripts *.py
 recursive-include diag_evidence/tests *.py
 recursive-include diag_evidence/skills *.md
 recursive-include diag_evidence/benchmarks *.json
+recursive-include diag_evidence/patrol *.html
 include NEXT_VALIDATION.md
 global-exclude *.pt *.pth *.safetensors *.bin *.mat *.npy *.npz *.csv *.jsonl *.log *.py[cod]
 include examples/synthetic_signal_1025.csv
+include examples/patrol_mission.json
 global-exclude .env .DS_Store
 prune .github
 prune build

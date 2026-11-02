@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>多机器人巡检调度回放 · DiagEvidence</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f8fafc;color:#182638;font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif}main{max-width:1450px;margin:auto;padding:28px 32px}h1{font-size:28px;line-height:1.3;margin:0 0 7px}h2{font-size:18px;margin:0}p{margin:5px 0}.muted{color:#58677a}.intro{max-width:1000px}.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:22px 0 10px;padding:15px 0;border-top:1px solid #cbd5e1;border-bottom:1px solid #cbd5e1}button,select{font:inherit;border:1px solid #aab8c8;background:white;border-radius:5px;padding:7px 13px;color:#182638;cursor:pointer}button:hover{background:#e9f1ff}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #2563eb;outline-offset:2px}#play{background:#183b65;color:#fff;border-color:#183b65;min-width:82px}#tick{font-variant-numeric:tabular-nums;min-width:110px}#scrub{width:100%;accent-color:#2563eb;margin:5px 0 13px}.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:#536176;margin:8px 0 18px}.dot{display:inline-block;width:10px;height:10px;background:var(--c);border-radius:50%;margin-right:5px}.columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}.panel{min-width:0}.panel header{min-height:70px}.panel canvas{width:100%;display:block;background:#fff;border:1px solid #cbd5e1;border-radius:4px}.stats{font-size:13px;margin:8px 0;color:#36465b;min-height:23px}table{width:100%;border-collapse:collapse;font-size:13px;text-align:left}th,td{padding:7px 6px;border-bottom:1px solid #dbe3ed;vertical-align:top}th{font-weight:600;color:#536176}.events{height:205px;overflow:auto;margin:10px 0 20px;border-top:1px solid #cbd5e1;padding-top:8px;font-size:13px}.events p{margin:0 0 6px}.events .important{color:#9a3412}.section{margin-top:22px;padding-top:18px;border-top:1px solid #cbd5e1}.summary{font-size:14px;max-width:1000px}.summary th,.summary td{padding:9px 12px}.note{font-size:13px;color:#59677a;margin-top:13px}.error{padding:20px;background:#fff1f2;color:#991b1b}label{font-size:14px}@media(max-width:950px){main{padding:20px 16px}.columns{grid-template-columns:1fr}.panel header{min-height:0;margin-bottom:10px}.panel canvas{max-height:440px}.events{height:135px}.summary{font-size:12px}.summary th,.summary td{padding:7px 4px}}@media print{.toolbar,#scrub{display:none}.events{height:auto}body{background:white}}
+</style>
+</head>
+<body><main>
+<h1>多机器人协同巡检与动态任务调度</h1>
+<p class="intro">每一时刻接收观测、核验信息、分配任务，再根据执行反馈调整。三种策略使用相同任务和机器人配置，下方同步回放其决策与动作。</p>
+<p id="context" class="muted"></p>
+<div class="toolbar"><button id="play" type="button">播放</button><button id="back" type="button" aria-label="后退一步">上一步</button><button id="next" type="button" aria-label="前进一步">下一步</button><button id="anomaly" type="button">下一条异常</button><span id="tick" aria-live="polite"></span><label>速度 <select id="speed"><option value="2">2步/秒</option><option value="5" selected>5步/秒</option><option value="10">10步/秒</option></select></label></div>
+<label for="scrub" class="muted">时间轴：拖动查看任意时刻</label><input id="scrub" type="range" min="0" value="0" aria-label="回放时刻">
+<div class="legend"><span><i class="dot" style="--c:#b45309"></i>待巡检</span><span><i class="dot" style="--c:#15803d"></i>实际已完成</span><span><i class="dot" style="--c:#94a3b8"></i>尚未发布</span><span>虚线圈：系统认为已完成</span><span>彩色线：机器人当前计划路径</span></div>
+<div id="panels" class="columns"></div>
+<section class="section"><h2>本次任务的最终结果</h2><table class="summary"><thead><tr><th>指标</th><th>直接采用消息</th><th>核验后调度</th><th>真实状态参照</th></tr></thead><tbody id="summary"></tbody></table>
+<p class="note">地图填色展示仿真环境的实际状态，虚线圈展示调度器的判断，便于追查错误派工。消息字节数统计应用层JSON载荷。当前实验运行于二维离散栅格。</p></section>
+</main>
+<script id="patrol-data" type="application/json">__PATROL_DATA__</script>
+<script>
+"use strict";
+const data=JSON.parse(document.getElementById('patrol-data').textContent);
+const policies=['direct','verified','oracle'];
+const labels={direct:'直接采用消息',verified:'核验后调度',oracle:'真实状态参照'};
+const descriptions={direct:'采用最新送达的合规消息',verified:'检查轮次、时间、来源身份和冲突',oracle:'调度时直接获得任务真实完成状态'};
+const scenarioNames={clean:'正常通信',stale:'旧轮次完工消息',replay:'转发重放与身份冲突',conflict:'观测冲突',delayed:'报告延迟',outage:'机器人临时故障',fresh_error:'新鲜错误观测',mixed:'混合扰动'};
+const reasons={wrong_mission_or_revision:'任务轮次或版本不符',unknown_origin:'来源未知',stale_or_future:'观测时间不适用',duplicate_record:'转发了同一原始记录',identity_conflict:'同一身份出现冲突内容',older_observation:'已收到更新的观测',invalid_message:'消息格式或可用时间无效'};
+const colors=['#2563eb','#9333ea','#0891b2','#c2410c','#4f46e5','#be185d','#4d7c0f','#0f766e'];
+const horizon=data.scenario.horizon;let tick=0,playing=false,last=0;
+const panels={};
+function element(tag,text,cls){const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x}
+document.getElementById('context').textContent=`场景：${scenarioNames[data.scenario.name]||data.scenario.name} ｜ 任务轮次：${data.scenario.mission} ｜ 分配器：${data.runs.verified.allocator==='matching'?'精确单步匹配':'贪心分配'} ｜ ${data.scenario.robots.length}台机器人 / ${data.scenario.tasks.length}个任务`;
+for(const policy of policies){
+ const panel=element('section',undefined,'panel'),head=element('header');head.append(element('h2',labels[policy]),element('p',descriptions[policy],'muted'));panel.append(head);
+ const canvas=element('canvas');canvas.setAttribute('aria-label',labels[policy]+'的任务地图');canvas.setAttribute('role','img');panel.append(canvas);
+ const stats=element('p',undefined,'stats');panel.append(stats);
+ const table=element('table'),thead=element('thead'),tr=element('tr');for(const text of ['机器人','当前任务','能量','状态'])tr.append(element('th',text));thead.append(tr);table.append(thead);const body=element('tbody');table.append(body);panel.append(table);
+ const events=element('div',undefined,'events');events.setAttribute('aria-label',labels[policy]+'的近期事件');panel.append(events);document.getElementById('panels').append(panel);panels[policy]={canvas,stats,body,events};
+}
+const rows=[['按时完成任务',m=>`${m.on_time_completed} / ${m.tasks}`],['优先级加权完成率',m=>(100*m.weighted_on_time_rate).toFixed(1)+'%'],['移动步数',m=>m.travel_steps],['能量消耗',m=>m.energy_used],['重复复检次数',m=>m.reinspections],['故障后重新派工',m=>m.reassignments_after_outage],['交通等待步数',m=>m.traffic_waits],['拦截消息数',m=>Object.values(m.message_rejections).reduce((a,b)=>a+b,0)],['消息载荷字节',m=>m.message_payload_bytes]];
+for(const [title,format] of rows){const tr=element('tr');tr.append(element('th',title));for(const p of policies)tr.append(element('td',String(format(data.runs[p].metrics))));document.getElementById('summary').append(tr)}
+function draw(canvas,run,frame){
+ const ratio=window.devicePixelRatio||1,w=canvas.clientWidth,h=w*run.grid.height/run.grid.width;
+ canvas.width=Math.round(w*ratio);canvas.height=Math.round(h*ratio);canvas.style.height=h+'px';const c=canvas.getContext('2d');c.setTransform(ratio,0,0,ratio,0,0);const unit=w/run.grid.width;
+ c.fillStyle='#fff';c.fillRect(0,0,w,h);c.strokeStyle='#e8edf4';c.lineWidth=.5;
+ for(let x=0;x<=run.grid.width;x++){c.beginPath();c.moveTo(x*unit,0);c.lineTo(x*unit,h);c.stroke()}
+ for(let y=0;y<=run.grid.height;y++){c.beginPath();c.moveTo(0,y*unit);c.lineTo(w,y*unit);c.stroke()}
+ for(const [x,y] of run.grid.blocked){c.fillStyle='#8c9aaa';c.fillRect(x*unit,y*unit,unit,unit)}
+ for(const [i,r] of frame.robots.entries())if(r.path.length){c.beginPath();c.moveTo((r.cell[0]+.5)*unit,(r.cell[1]+.5)*unit);for(const p of r.path)c.lineTo((p[0]+.5)*unit,(p[1]+.5)*unit);c.strokeStyle=colors[i%colors.length];c.lineWidth=1.5;c.setLineDash([3,3]);c.stroke();c.setLineDash([])}
+ for(const t of frame.tasks){const x=(t.cell[0]+.5)*unit,y=(t.cell[1]+.5)*unit,done=t.completed_at!==null&&t.completed_at<=tick;c.fillStyle=done?'#15803d':tick<t.release?'#94a3b8':tick>t.deadline?'#b91c1c':'#b45309';c.beginPath();c.arc(x,y,unit*.2,0,Math.PI*2);c.fill();if(t.belief==='completed'){c.beginPath();c.arc(x,y,unit*.34,0,Math.PI*2);c.setLineDash([2,2]);c.strokeStyle=done?'#15803d':'#b91c1c';c.lineWidth=1.5;c.stroke();c.setLineDash([])}c.fillStyle='#1f2937';c.font=`${Math.max(9,unit*.42)}px sans-serif`;c.fillText(t.id,x+unit*.23,y-unit*.21)}
+ for(const [i,r] of frame.robots.entries()){const x=(r.cell[0]+.5)*unit,y=(r.cell[1]+.5)*unit;c.fillStyle=r.status==='down'?'#64748b':colors[i%colors.length];c.beginPath();c.arc(x,y,unit*.34,0,Math.PI*2);c.fill();c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.font=`bold ${Math.max(8,unit*.39)}px sans-serif`;c.fillText(r.id,x,y);c.textAlign='left';c.textBaseline='alphabetic'}
+}
+function eventText(e){let text='';switch(e.kind){case'assigned':text=`${e.robot} → ${e.task}，派工评分 ${e.utility}`;break;case'report_rejected':text=`拦截 ${e.task}：${reasons[e.reason]||e.reason}`;break;case'report_received':text=`收到 ${e.origin} 的 ${e.task} ${e.state==='completed'?'完工':'待办'}观测（观测时刻 ${e.observed_at}）`;break;case'task_completed':text=`${e.robot} 完成 ${e.task}`;break;case'task_reinspected':text=`${e.robot} 复检 ${e.task}`;break;case'robot_down':text=`${e.robot} 暂时故障`;break;case'robot_recovered':text=`${e.robot} 恢复可用`;break;case'assignment_interrupted':text=`${e.robot} 的 ${e.task} 执行中断`;break;case'reassigned_after_outage':text=`${e.task} 重新派给 ${e.robot}`;break;case'assignment_cancelled':text=`根据完工消息取消 ${e.robot} 的 ${e.task}`;break;default:text=e.kind}return `t=${e.tick}  ${text}`}
+function render(){
+ document.getElementById('tick').textContent=`时刻 ${tick} / ${horizon}`;document.getElementById('scrub').value=tick;
+ for(const p of policies){const run=data.runs[p],frame=run.frames[tick],ui=panels[p];draw(ui.canvas,run,frame);
+ const actual=frame.tasks.filter(t=>t.completed_at!==null&&t.completed_at<=tick).length,believed=frame.tasks.filter(t=>t.belief==='completed').length,conflicts=frame.tasks.filter(t=>t.belief==='conflict').length;
+ ui.stats.textContent=`实际完成 ${actual} ｜ 系统判定完成 ${believed} ｜ 观测冲突 ${conflicts}`;ui.body.replaceChildren();
+ for(const r of frame.robots){const tr=element('tr');for(const text of [r.id,r.task||'—',r.battery,r.status==='down'?'故障':r.task?'执行中':r.path.length?'回位':'待命'])tr.append(element('td',String(text)));ui.body.append(tr)}
+ ui.events.replaceChildren();const recent=run.events.filter(e=>e.tick<=tick&&e.tick>=tick-5).slice(-9);if(!recent.length)ui.events.append(element('p','当前没有新事件','muted'));for(const e of recent)ui.events.append(element('p',eventText(e),e.kind==='report_rejected'||e.kind.includes('interrupted')?'important':''));
+ }
+}
+function pause(){playing=false;document.getElementById('play').textContent='播放'}
+document.getElementById('scrub').max=horizon;document.getElementById('scrub').addEventListener('input',e=>{pause();tick=Number(e.target.value);render()});
+document.getElementById('play').addEventListener('click',()=>{if(playing){pause()}else{if(tick===horizon)tick=0;playing=true;last=performance.now();document.getElementById('play').textContent='暂停';render()}});
+document.getElementById('back').addEventListener('click',()=>{pause();tick=Math.max(0,tick-1);render()});document.getElementById('next').addEventListener('click',()=>{pause();tick=Math.min(horizon,tick+1);render()});
+document.getElementById('anomaly').addEventListener('click',()=>{pause();const future=data.runs.verified.events.find(e=>e.tick>tick&&(e.kind==='report_rejected'||e.kind==='assignment_interrupted'));tick=future?future.tick:0;render()});
+function loop(now){if(playing&&now-last>=1000/Number(document.getElementById('speed').value)){tick=Math.min(horizon,tick+1);last=now;if(tick===horizon)pause();render()}requestAnimationFrame(loop)}
+window.addEventListener('resize',render);render();requestAnimationFrame(loop);
+</script></body></html>

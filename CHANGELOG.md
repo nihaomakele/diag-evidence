@@ -2,6 +2,16 @@
 
 This file records changes to the public research-preview source tree.
 
+## 0.3.0.dev0 — Online multi-robot patrol
+
+- Add typed mission contracts, A* routing, greedy and exact bounded one-step
+  assignment, energy/deadline constraints and traffic arbitration.
+- Put observation identity, revision, timing and conflict checks before each
+  dispatch decision; add outage interruption, reassignment and feedback.
+- Export portable synchronized replay with playback controls, maps and events.
+- Add eight paired scenarios, source freezing and held-out layout evaluation:
+  1,920 runs and 32 new patrol tests; retain the earlier diagnostic modules.
+
 ## 0.2.0.dev4 — Record support screening
 
 - Add source-only record-median support prototypes and a fixed threshold from
