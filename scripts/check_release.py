@@ -19,7 +19,7 @@ from pathlib import Path, PurePosixPath
 
 FORBIDDEN_SUFFIXES = {
     ".pt", ".pth", ".safetensors", ".bin", ".onnx", ".pkl", ".pickle",
-    ".pdf", ".csv", ".jsonl", ".log", ".pyc", ".pyo", ".key", ".pem",
+    ".pdf", ".csv", ".mat", ".npy", ".npz", ".jsonl", ".log", ".pyc", ".pyo", ".key", ".pem",
 }
 FORBIDDEN_PARTS = {
     ".git", ".venv", "venv", "__pycache__", "node_modules", "private_data",

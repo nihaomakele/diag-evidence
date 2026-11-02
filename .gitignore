@@ -28,6 +28,9 @@ evaluation-output/
 *.log
 *.jsonl
 private_data/
+*.mat
+*.npy
+*.npz
 
 # Model checkpoints are never part of the source distribution
 *.pt

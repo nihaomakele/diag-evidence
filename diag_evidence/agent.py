@@ -12,6 +12,7 @@ from uuid import uuid4
 
 from .audit_log import AuditLogger, sanitize, summary, utc_now
 from .contracts import SignalValidationError, validate_signal
+from .reference_policy import validate_reference_context
 from .haconfig import settings
 from .hatools._common import invalid_input_response
 from .hatools import (analyze_signal, check_system_status, generate_report,
@@ -112,17 +113,18 @@ class DiagnosisAgent:
 
     def run(self, signal: Any = None, sample_info: Optional[dict] = None,
             llm_prompt_text: Optional[str] = None, input_is_synthetic: bool = True,
-            skip_services_check: bool = False, llm_expected: bool = False) -> dict:
+            skip_services_check: bool = False, llm_expected: bool = False,
+            evidence_context: Optional[dict] = None) -> dict:
         if not self._lock.acquire(blocking=False):
             raise RuntimeError("DiagnosisAgent is already running; use a separate instance")
         try:
             return self._run(signal, sample_info, llm_prompt_text, input_is_synthetic,
-                             skip_services_check, llm_expected)
+                             skip_services_check, llm_expected, evidence_context)
         finally:
             self._lock.release()
 
     def _run(self, signal, sample_info, llm_prompt_text, input_is_synthetic,
-             skip_services_check, llm_expected):
+             skip_services_check, llm_expected, evidence_context):
         self.run_id = uuid4().hex
         self.trace = TraceRecorder(self.log_dir, self.persist_trace, self.run_id)
         self.audit = AuditLogger(self.log_dir, persist=self.persist_trace, run_id=self.run_id)
@@ -134,10 +136,17 @@ class DiagnosisAgent:
             return self._finish(outcomes, ASKING_USER, tick, question="流程控制参数必须为布尔值。")
         if sample_info is not None and not isinstance(sample_info, dict):
             return self._finish(outcomes, ASKING_USER, tick, question="sample_info 必须是对象。")
+        try:
+            evidence_context = validate_reference_context(evidence_context)
+            if evidence_context is not None and evidence_context["sampling_rate"] != self.config.sampling_rate:
+                raise ValueError("Context and signal sampling rates disagree")
+        except ValueError:
+            return self._finish(outcomes, ASKING_USER, tick,
+                                question="证据上下文字段或时点格式无效，或采样率与本次信号配置不一致。")
         sample_info = deepcopy(sample_info or {})
         # Metadata cannot override controls supplied to run(). The report performs
         # an independent check against the very same declared inputs.
-        for control in ("llm_prompt_text", "llm_expected", "input_is_synthetic"):
+        for control in ("llm_prompt_text", "llm_expected", "input_is_synthetic", "evidence_context"):
             sample_info.pop(control, None)
         sample_info.update(llm_prompt_text=llm_prompt_text, llm_expected=llm_expected,
                            input_is_synthetic=input_is_synthetic)
@@ -181,7 +190,8 @@ class DiagnosisAgent:
             VERIFYING_RESULT, "verify_result", verify_result,
             diagnosis_result=outcomes["diagnosis"], rag_result=outcomes["rag"],
             llm_prompt_text=llm_prompt_text, llm_expected=llm_expected,
-            input_is_synthetic=input_is_synthetic)
+            input_is_synthetic=input_is_synthetic, evidence_context=evidence_context,
+            label_schema=self.config.label_schema)
         verified = outcomes["verify"].get("data") or {}
         terminal = COMPLETED if verified.get("trust_level") == "high" else DEGRADED
         outcomes["report"] = self._step(
@@ -190,7 +200,8 @@ class DiagnosisAgent:
             diagnosis_result=outcomes["diagnosis"], verify_data=outcomes["verify"],
             sample_info={**sample_info, "run_id": self.run_id, "input_digest": digest},
             write_file=self.persist_outputs, output_dir=self.config.reports_dir,
-            run_id=self.run_id)
+            run_id=self.run_id, evidence_context=evidence_context,
+            label_schema=self.config.label_schema)
         if outcomes["report"]["status"] == "error" or outcomes["verify"]["status"] == "error":
             terminal = FAILED
         elif self.persist_outputs and not (outcomes["report"].get("data") or {}).get("path") and terminal == COMPLETED:
@@ -244,7 +255,7 @@ class DiagnosisAgent:
 
 def run_agent(signal: Any, sample_info: Optional[dict] = None, **kwargs) -> dict:
     constructor_fields = {"transport", "persist_trace", "log_dir", "config", "persist_outputs"}
-    run_fields = {"llm_prompt_text", "input_is_synthetic", "skip_services_check", "llm_expected"}
+    run_fields = {"llm_prompt_text", "input_is_synthetic", "skip_services_check", "llm_expected", "evidence_context"}
     if set(kwargs) - constructor_fields - run_fields:
         # Reject typos before constructing an agent or creating any artifacts.
         # Argument names may themselves contain credentials; do not echo them.

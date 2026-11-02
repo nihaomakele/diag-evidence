@@ -12,9 +12,11 @@ from typing import Any, Dict, List, Optional
 
 from ..haconfig import settings
 from ..contracts import finite_number
+from ..reference_policy import assess_references
 from . import _common
+from .diagnosis import ABSTENTION_REASONS
 
-POLICY_VERSION = "diagnosis-evidence/1.0"
+POLICY_VERSION = "diagnosis-evidence/1.3"
 SUPPORT_DEFINITION = (
     "规则证据支持等级：high 仅表示本版本必需检查均通过；"
     "不代表诊断正确概率、真实设备有效性或检索案例相互独立。"
@@ -58,6 +60,8 @@ def verify_result(
     input_is_synthetic: bool = True,
     min_retrieval: int = 3,
     llm_expected: bool = False,
+    evidence_context: Optional[Dict[str, Any]] = None,
+    label_schema: str = "faults-v1",
 ) -> Dict[str, Any]:
     """Return explicit check states, a support level, and a conclusion-strength cap.
 
@@ -65,6 +69,7 @@ def verify_result(
     is expected, a missing prompt is ``unknown`` and cannot pass the policy.
     The legacy ``trust_level`` and boolean/None ``passed`` fields remain aliases.
     """
+    labels = settings.class_labels(label_schema)
     started = time.time()
     checks: List[Dict[str, Any]] = []
     warnings: List[str] = []
@@ -85,6 +90,11 @@ def verify_result(
     predicted_class = diagnosis.get("predicted_class")
     predicted_name = _dict(diagnosis.get("predicted_fault")).get("name")
     confidence = diagnosis.get("confidence")
+    abstention_flag = diagnosis.get("abstained", False)
+    reason = diagnosis.get("abstention_reason")
+    abstained = (model_available and abstention_flag is True and predicted_class is None
+                and confidence is None and isinstance(reason, str) and reason in ABSTENTION_REASONS
+                and diagnosis.get("class_probabilities") in (None, {}))
     strength = diagnosis.get("conclusion_strength")
     if isinstance(strength, str):
         strength = _LEGACY_STRENGTH.get(strength, strength)
@@ -103,16 +113,20 @@ def verify_result(
         check("classifier_available", "passed", "上游声明模型可用；不代表模型经过独立验证")
 
     class_valid = (
-        type(predicted_class) is int and predicted_class in settings.FAULT_LABELS
+        type(predicted_class) is int and predicted_class in labels
         and isinstance(predicted_name, str)
-        and predicted_name == settings.FAULT_LABELS[predicted_class]["name"]
+        and predicted_name == labels[predicted_class]["name"]
+        and diagnosis.get("label_schema", label_schema) == label_schema
+        and abstention_flag is False
     )
-    if not diagnosis or (model_available and predicted_class is None):
+    if abstained:
+        check("class_prediction_valid", "not_applicable", "分类器主动拒绝，未提出类别结论", required=False)
+    elif not diagnosis or (model_available and predicted_class is None):
         check("class_prediction_valid", "unknown", "分类类别或名称缺失")
     elif not model_available:
         check("class_prediction_valid", "not_applicable", "分类器不可用，类别检查不适用", required=False)
     elif class_valid:
-        check("class_prediction_valid", "passed", "类别编号与当前三类故障契约一致")
+        check("class_prediction_valid", "passed", "类别编号与声明的 label_schema 一致")
     else:
         check("class_prediction_valid", "failed", "类别编号未知，或类别名称与编号不一致")
         warnings.append("分类类别无效，禁止给出故障类别结论")
@@ -122,7 +136,9 @@ def verify_result(
         valid_confidence = 0 <= numeric_confidence <= 1
     except ValueError:
         valid_confidence = False
-    if not model_available:
+    if abstained:
+        check("confidence_valid", "not_applicable", "主动拒绝未输出类别置信度", required=False)
+    elif not model_available:
         check("confidence_valid", "not_applicable", "分类器不可用，置信度检查不适用", required=False)
     elif confidence is None:
         check("confidence_valid", "unknown", "分类置信度缺失")
@@ -141,7 +157,16 @@ def verify_result(
                               (rag_envelope["status"] == "ok")))
     rag_data = _dict(rag_envelope.get("data")) if rag_envelope_valid else {}
     raw_cases = rag_data.get("cases")
-    cases = [case for case in raw_cases if isinstance(case, dict)] if isinstance(raw_cases, list) else []
+    received_cases = [case for case in raw_cases if isinstance(case, dict)] if isinstance(raw_cases, list) else []
+    applicability = assess_references(received_cases, evidence_context)
+    cases = [received_cases[i] for i in applicability["eligible_indices"]]
+    check("reference_applicability", applicability["state"],
+          "仅将通过已声明单位、采样率、预处理和时点检查的历史候选计入支持；不验证元信息真实性"
+          if applicability["enabled"] else "未启用历史参考适用性检查，不代表已验证设备、工况或时间适用性",
+          required=applicability["enabled"])
+    excluded_count = len(received_cases) - len(cases)
+    if excluded_count:
+        warnings.append("%d 条检索候选未通过声明适用性检查，不计入规则支持" % excluded_count)
     fault_types = [case.get("fault_type") for case in cases
                    if isinstance(case.get("fault_type"), str) and case.get("fault_type")]
     candidate_agreement = bool(fault_types) and len(set(fault_types)) == 1 and len(fault_types) == len(cases)
@@ -183,8 +208,8 @@ def verify_result(
         raise ValueError("min_retrieval 必须为正整数")
     reported_count = rag_data.get("num_results")
     actual_count = len(cases)
-    malformed_cases = isinstance(raw_cases, list) and len(raw_cases) != actual_count
-    count_consistent = type(reported_count) is int and reported_count == actual_count
+    malformed_cases = isinstance(raw_cases, list) and len(raw_cases) != len(received_cases)
+    count_consistent = type(reported_count) is int and reported_count == len(received_cases)
     scale_passes = actual_count >= min_retrieval and count_consistent and not malformed_cases
     if not isinstance(raw_cases, list) or reported_count is None:
         check("retrieval_scale", "unknown", "未获得可核对的案例列表与返回数量")
@@ -199,7 +224,8 @@ def verify_result(
 
     required_incomplete = [item for item in checks
                            if item["required"] and item["state"] != "passed"]
-    hard_names = {"classifier_available", "class_prediction_valid", "confidence_valid", "label_leakage"}
+    hard_names = {"classifier_available", "class_prediction_valid", "confidence_valid", "label_leakage",
+                  "reference_applicability"}
     hard_incomplete = [item for item in required_incomplete if item["name"] in hard_names]
     if not model_available and not cases:
         level = "unavailable"
@@ -221,9 +247,15 @@ def verify_result(
 
     data = {"trust_level": level, "support_level": level,
             "support_definition": SUPPORT_DEFINITION, "policy_version": POLICY_VERSION,
+            "label_schema": label_schema, "classifier_abstained": abstained,
+            "abstention_reason": reason if abstained else None,
             "checks": checks, "max_allowed_strength": max_strength,
             "input_is_synthetic": bool(input_is_synthetic), "diagnosis_strength": strength,
-            "retrieval_candidate_count": actual_count, "independent_evidence_count": None}
+            "retrieval_candidate_count": actual_count,
+            "retrieval_received_candidate_count": len(received_cases),
+            "reference_policy_enabled": applicability["enabled"],
+            "reference_assessments": applicability["assessments"],
+            "independent_evidence_count": None}
     evidence = [_common.make_evidence("system", "verification", "规则支持等级 %s；结论强度上限 %s" % (level, max_strength),
                                      {"checks": checks, "policy_version": POLICY_VERSION}, trust=level)]
     return _common.make_response(

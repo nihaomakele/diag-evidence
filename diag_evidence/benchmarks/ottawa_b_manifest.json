@@ -1,0 +1,191 @@
+{
+  "dataset": "Bearing Vibration Data under Time-varying Rotational Speed Conditions",
+  "doi": "10.17632/v43hmbwxpm.2",
+  "version": 2,
+  "authors": [
+    "Huan Huang",
+    "Natalie Baddour"
+  ],
+  "institution": "University of Ottawa",
+  "license": "CC-BY-4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_url": "https://data.mendeley.com/datasets/v43hmbwxpm/2",
+  "article_url": "https://doi.org/10.1016/j.dib.2018.11.019",
+  "source_sampling_rate": 200000,
+  "target_sampling_rate": 51200,
+  "source_units": null,
+  "acquisition_timestamps": null,
+  "signal_channel": "Channel_1",
+  "subset": "previously unread decelerating B profile, all three trials, same test rig and bearing conditions as A; not independent physical devices",
+  "files": [
+    {
+      "filename": "B-B-1.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/22723f54-69b6-45b8-9dd1-ef496a4ee780/file_downloaded",
+      "file_id": "22723f54-69b6-45b8-9dd1-ef496a4ee780",
+      "bytes": 12496164,
+      "sha256": "a32dd2e7fc513dc14214667a54c8faa381de65625cdff7fc8bcf82a480c244aa",
+      "trial": 1,
+      "speed_profile": "B",
+      "label": 2,
+      "split": "condition_B_known"
+    },
+    {
+      "filename": "B-B-2.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/3cfbd3aa-36f2-4918-9559-76208ec2d684/file_downloaded",
+      "file_id": "3cfbd3aa-36f2-4918-9559-76208ec2d684",
+      "bytes": 12257242,
+      "sha256": "ed5b0231d96c89b5ccc845e39f4d40ea174d130b16516196f573c5cebf0a4dbb",
+      "trial": 2,
+      "speed_profile": "B",
+      "label": 2,
+      "split": "condition_B_known"
+    },
+    {
+      "filename": "B-B-3.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/8e16ad2d-c1d1-4d93-a548-e32ad05b4e36/file_downloaded",
+      "file_id": "8e16ad2d-c1d1-4d93-a548-e32ad05b4e36",
+      "bytes": 13053987,
+      "sha256": "6b1b0a7aaa8f6997e1d43a52633bbf777501c16a806b2ced635398eebfcf5a63",
+      "trial": 3,
+      "speed_profile": "B",
+      "label": 2,
+      "split": "condition_B_known"
+    },
+    {
+      "filename": "C-B-1.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/235c76f8-aea0-4d0d-9589-b705a46a82a1/file_downloaded",
+      "file_id": "235c76f8-aea0-4d0d-9589-b705a46a82a1",
+      "bytes": 14078923,
+      "sha256": "7ec911e4838ef636d66a1cca5a95e29dd957c68689cda49438e68492624a5a57",
+      "trial": 1,
+      "speed_profile": "B",
+      "label": null,
+      "split": "condition_B_combination"
+    },
+    {
+      "filename": "C-B-2.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/a4468f73-9604-4caa-9ea8-e417088ab94f/file_downloaded",
+      "file_id": "a4468f73-9604-4caa-9ea8-e417088ab94f",
+      "bytes": 14210135,
+      "sha256": "0565a6bab7d7b9d8289acde79d879808dd7efa1f9ba3d058f8b5bd0307d0980a",
+      "trial": 2,
+      "speed_profile": "B",
+      "label": null,
+      "split": "condition_B_combination"
+    },
+    {
+      "filename": "C-B-3.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/ae864211-1419-4922-ba75-5bfbf58f5682/file_downloaded",
+      "file_id": "ae864211-1419-4922-ba75-5bfbf58f5682",
+      "bytes": 14256102,
+      "sha256": "36791f7e0733c5b5e4c69b8936cd5b41c5b39041d715cc6e568c8f203566db23",
+      "trial": 3,
+      "speed_profile": "B",
+      "label": null,
+      "split": "condition_B_combination"
+    },
+    {
+      "filename": "H-B-1.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/38211e5a-627a-41c0-b85b-ff4d60ae216e/file_downloaded",
+      "file_id": "38211e5a-627a-41c0-b85b-ff4d60ae216e",
+      "bytes": 12182954,
+      "sha256": "c32bdb51290ccde19adca328b2c17944acabdcf4ee977ff7358892502795d1ab",
+      "trial": 1,
+      "speed_profile": "B",
+      "label": 3,
+      "split": "condition_B_known"
+    },
+    {
+      "filename": "H-B-2.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/63684aea-01a0-49d5-85f9-7db891c53183/file_downloaded",
+      "file_id": "63684aea-01a0-49d5-85f9-7db891c53183",
+      "bytes": 11858198,
+      "sha256": "993fed480dc7f5b9f24da8670f94a0bf15804e292de61e6590adb5773bf0b1a6",
+      "trial": 2,
+      "speed_profile": "B",
+      "label": 3,
+      "split": "condition_B_known"
+    },
+    {
+      "filename": "H-B-3.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/7d67332c-cb3a-4f5c-8c1f-3a20a4b195cd/file_downloaded",
+      "file_id": "7d67332c-cb3a-4f5c-8c1f-3a20a4b195cd",
+      "bytes": 12281532,
+      "sha256": "7c4fa4a9babe8eba73b6cfe9f6c1005a2b2ddd54f53f63e4817f959e94c06db4",
+      "trial": 3,
+      "speed_profile": "B",
+      "label": 3,
+      "split": "condition_B_known"
+    },
+    {
+      "filename": "I-B-1.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/f03b9e0b-f493-4a1e-9145-bd5817613d8b/file_downloaded",
+      "file_id": "f03b9e0b-f493-4a1e-9145-bd5817613d8b",
+      "bytes": 15064234,
+      "sha256": "b6d2d338c839e48ca2c16d8f16885bc7508ce7b5e5c90ead9738c4357c19cab8",
+      "trial": 1,
+      "speed_profile": "B",
+      "label": 0,
+      "split": "condition_B_known"
+    },
+    {
+      "filename": "I-B-2.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/3b404b74-e145-4957-bdb8-085eb384cde6/file_downloaded",
+      "file_id": "3b404b74-e145-4957-bdb8-085eb384cde6",
+      "bytes": 15622518,
+      "sha256": "92f4e49aeef4cb2d093583d2e2632fc08f62f4ddc1e97a4b955a45611262d781",
+      "trial": 2,
+      "speed_profile": "B",
+      "label": 0,
+      "split": "condition_B_known"
+    },
+    {
+      "filename": "I-B-3.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/d2e61dc3-e9e7-426e-8c43-452835424fa4/file_downloaded",
+      "file_id": "d2e61dc3-e9e7-426e-8c43-452835424fa4",
+      "bytes": 15779273,
+      "sha256": "a252adc89b65cb51febf055d14945e740b9790ba345db4c58c317804b5582f60",
+      "trial": 3,
+      "speed_profile": "B",
+      "label": 0,
+      "split": "condition_B_known"
+    },
+    {
+      "filename": "O-B-1.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/1569123b-945a-47d0-a0d4-5b0faa417d4d/file_downloaded",
+      "file_id": "1569123b-945a-47d0-a0d4-5b0faa417d4d",
+      "bytes": 12099142,
+      "sha256": "8bd90233c8c4ae24c45d29394ca432eeca609dc9cb8c4935ea0a07b229e1fab9",
+      "trial": 1,
+      "speed_profile": "B",
+      "label": 1,
+      "split": "condition_B_known"
+    },
+    {
+      "filename": "O-B-2.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/36ce5b08-d917-4691-924f-f03d46ece64b/file_downloaded",
+      "file_id": "36ce5b08-d917-4691-924f-f03d46ece64b",
+      "bytes": 12082036,
+      "sha256": "017a8546aef8658ebfd29902eb53c7c4f6f4f1b99e5b4c624dfc525f4584fb32",
+      "trial": 2,
+      "speed_profile": "B",
+      "label": 1,
+      "split": "condition_B_known"
+    },
+    {
+      "filename": "O-B-3.mat",
+      "url": "https://data.mendeley.com/public-files/datasets/v43hmbwxpm/files/9fddaba2-d322-4b5b-9883-ea6ef8b8aca1/file_downloaded",
+      "file_id": "9fddaba2-d322-4b5b-9883-ea6ef8b8aca1",
+      "bytes": 12205953,
+      "sha256": "500492f1724631661eaafc199993276cb8f6c43d5cd233ae1291bbd824857a20",
+      "trial": 3,
+      "speed_profile": "B",
+      "label": 1,
+      "split": "condition_B_known"
+    }
+  ],
+  "encoder_channel": "Channel_2",
+  "encoder_cpr": 1024,
+  "legacy_fixed_feature_pipeline_uses_encoder": false,
+  "offline_envelope_order_pipeline_uses_encoder": true
+}

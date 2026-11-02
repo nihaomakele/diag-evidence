@@ -1,0 +1,440 @@
+{
+  "dataset": "HIT-SM bearing datasets",
+  "institution": "Sensing and Measurement Laboratory, Harbin Institute of Technology",
+  "repository": "https://github.com/hitwzc/Bearing-datasets",
+  "source_commit": "12e46cd1b4a40f396c2bd6e245be5bafe18b1989",
+  "readme_url": "https://github.com/hitwzc/Bearing-datasets/blob/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/README.md",
+  "paper_doi": "10.1088/1361-6501/ac7941",
+  "sampling_rate_hz": 51200,
+  "source_units": null,
+  "acquisition_timestamps": null,
+  "data_license_spdx": null,
+  "source_permission": "README permits anyone to use the datasets for classifying rolling-bearing fault status. Raw files remain upstream.",
+  "label_map": {
+    "IR": 0,
+    "OR": 1,
+    "Normal": 3
+  },
+  "files": [
+    {
+      "filename": "selfbuilt__IR2_1200.mat",
+      "upstream_path": "Self-built dataset/IR2_1200.mat",
+      "rig": "selfbuilt",
+      "label": 0,
+      "nominal_rpm": 1200,
+      "bytes": 1580481,
+      "git_blob_sha": "dbe432a78b4ea95192c6997fa25480b12dff94f1",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/IR2_1200.mat"
+    },
+    {
+      "filename": "selfbuilt__IR2_600.mat",
+      "upstream_path": "Self-built dataset/IR2_600.mat",
+      "rig": "selfbuilt",
+      "label": 0,
+      "nominal_rpm": 600,
+      "bytes": 1423623,
+      "git_blob_sha": "82bcbbf4a0c296305dab1cc1047ed3451e4f9fec",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/IR2_600.mat"
+    },
+    {
+      "filename": "selfbuilt__IR2_900.mat",
+      "upstream_path": "Self-built dataset/IR2_900.mat",
+      "rig": "selfbuilt",
+      "label": 0,
+      "nominal_rpm": 900,
+      "bytes": 1491347,
+      "git_blob_sha": "19f9d86eb956375b09622801627a1155ebd8cf7e",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/IR2_900.mat"
+    },
+    {
+      "filename": "selfbuilt__IR5_1200.mat",
+      "upstream_path": "Self-built dataset/IR5_1200.mat",
+      "rig": "selfbuilt",
+      "label": 0,
+      "nominal_rpm": 1200,
+      "bytes": 2007436,
+      "git_blob_sha": "4b6962705644722165ad1d50c396fcad15b50fad",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/IR5_1200.mat"
+    },
+    {
+      "filename": "selfbuilt__IR5_600.mat",
+      "upstream_path": "Self-built dataset/IR5_600.mat",
+      "rig": "selfbuilt",
+      "label": 0,
+      "nominal_rpm": 600,
+      "bytes": 1990846,
+      "git_blob_sha": "dd71fba6a5232df7fbaae4550f5e379558e15482",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/IR5_600.mat"
+    },
+    {
+      "filename": "selfbuilt__IR5_900.mat",
+      "upstream_path": "Self-built dataset/IR5_900.mat",
+      "rig": "selfbuilt",
+      "label": 0,
+      "nominal_rpm": 900,
+      "bytes": 2003694,
+      "git_blob_sha": "8a62577c1987030336cab3db7d96d073aca4d322",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/IR5_900.mat"
+    },
+    {
+      "filename": "selfbuilt__IR8_1200.mat",
+      "upstream_path": "Self-built dataset/IR8_1200.mat",
+      "rig": "selfbuilt",
+      "label": 0,
+      "nominal_rpm": 1200,
+      "bytes": 1544172,
+      "git_blob_sha": "70ef3158b2532886ab1f5d61e9e965ce7a2915fc",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/IR8_1200.mat"
+    },
+    {
+      "filename": "selfbuilt__IR8_600.mat",
+      "upstream_path": "Self-built dataset/IR8_600.mat",
+      "rig": "selfbuilt",
+      "label": 0,
+      "nominal_rpm": 600,
+      "bytes": 1392324,
+      "git_blob_sha": "0ddc640f6cff9a109db9526d4de55c054bf5ed83",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/IR8_600.mat"
+    },
+    {
+      "filename": "selfbuilt__IR8_900.mat",
+      "upstream_path": "Self-built dataset/IR8_900.mat",
+      "rig": "selfbuilt",
+      "label": 0,
+      "nominal_rpm": 900,
+      "bytes": 1543133,
+      "git_blob_sha": "d8715738dac7dc6dbe984693c67c65a443cb29fa",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/IR8_900.mat"
+    },
+    {
+      "filename": "selfbuilt__Normal_1200.mat",
+      "upstream_path": "Self-built dataset/Normal_1200.mat",
+      "rig": "selfbuilt",
+      "label": 3,
+      "nominal_rpm": 1200,
+      "bytes": 1874801,
+      "git_blob_sha": "01fb7be610c20b97349011a1a78ef8921a247cff",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/Normal_1200.mat"
+    },
+    {
+      "filename": "selfbuilt__Normal_600.mat",
+      "upstream_path": "Self-built dataset/Normal_600.mat",
+      "rig": "selfbuilt",
+      "label": 3,
+      "nominal_rpm": 600,
+      "bytes": 1873427,
+      "git_blob_sha": "17924a98b509dc61f5fb07f716b526fa5a8e47bb",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/Normal_600.mat"
+    },
+    {
+      "filename": "selfbuilt__Normal_900.mat",
+      "upstream_path": "Self-built dataset/Normal_900.mat",
+      "rig": "selfbuilt",
+      "label": 3,
+      "nominal_rpm": 900,
+      "bytes": 1878542,
+      "git_blob_sha": "816b1c5ae45e14762bd71fcee0bd308f1639584c",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/Normal_900.mat"
+    },
+    {
+      "filename": "selfbuilt__OR2_1200.mat",
+      "upstream_path": "Self-built dataset/OR2_1200.mat",
+      "rig": "selfbuilt",
+      "label": 1,
+      "nominal_rpm": 1200,
+      "bytes": 1614929,
+      "git_blob_sha": "6894de81009ec69d8af9be8b35df708514a45e23",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/OR2_1200.mat"
+    },
+    {
+      "filename": "selfbuilt__OR2_600.mat",
+      "upstream_path": "Self-built dataset/OR2_600.mat",
+      "rig": "selfbuilt",
+      "label": 1,
+      "nominal_rpm": 600,
+      "bytes": 1369172,
+      "git_blob_sha": "8a1beefa249ae8613c5b2d33678fbcaec01921db",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/OR2_600.mat"
+    },
+    {
+      "filename": "selfbuilt__OR2_900.mat",
+      "upstream_path": "Self-built dataset/OR2_900.mat",
+      "rig": "selfbuilt",
+      "label": 1,
+      "nominal_rpm": 900,
+      "bytes": 1526634,
+      "git_blob_sha": "44a64124b647bebfa530491d6790b405f44677ee",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/OR2_900.mat"
+    },
+    {
+      "filename": "selfbuilt__OR5_1200.mat",
+      "upstream_path": "Self-built dataset/OR5_1200.mat",
+      "rig": "selfbuilt",
+      "label": 1,
+      "nominal_rpm": 1200,
+      "bytes": 1999737,
+      "git_blob_sha": "63e5d5a6cfcccea0ce607dbd0ab170d8c7594a6b",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/OR5_1200.mat"
+    },
+    {
+      "filename": "selfbuilt__OR5_600.mat",
+      "upstream_path": "Self-built dataset/OR5_600.mat",
+      "rig": "selfbuilt",
+      "label": 1,
+      "nominal_rpm": 600,
+      "bytes": 1975218,
+      "git_blob_sha": "d5ec81379904231ac14607fc5ad07a2588b55dbb",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/OR5_600.mat"
+    },
+    {
+      "filename": "selfbuilt__OR5_900.mat",
+      "upstream_path": "Self-built dataset/OR5_900.mat",
+      "rig": "selfbuilt",
+      "label": 1,
+      "nominal_rpm": 900,
+      "bytes": 1992400,
+      "git_blob_sha": "b4975cfba6db7f3831d91d528eeeab95524f51de",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/OR5_900.mat"
+    },
+    {
+      "filename": "selfbuilt__OR8_1200.mat",
+      "upstream_path": "Self-built dataset/OR8_1200.mat",
+      "rig": "selfbuilt",
+      "label": 1,
+      "nominal_rpm": 1200,
+      "bytes": 1597231,
+      "git_blob_sha": "514874af0d7a385061f143f289ee3d85e5c5a973",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/OR8_1200.mat"
+    },
+    {
+      "filename": "selfbuilt__OR8_600.mat",
+      "upstream_path": "Self-built dataset/OR8_600.mat",
+      "rig": "selfbuilt",
+      "label": 1,
+      "nominal_rpm": 600,
+      "bytes": 1458165,
+      "git_blob_sha": "1557c21c23dd25d73d0513a39d3616a86facf354",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/OR8_600.mat"
+    },
+    {
+      "filename": "selfbuilt__OR8_900.mat",
+      "upstream_path": "Self-built dataset/OR8_900.mat",
+      "rig": "selfbuilt",
+      "label": 1,
+      "nominal_rpm": 900,
+      "bytes": 1538838,
+      "git_blob_sha": "2ae26384263ec77fbfd1190a73641648663112ca",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/Self-built%20dataset/OR8_900.mat"
+    },
+    {
+      "filename": "spectraquest__IR2_1200.mat",
+      "upstream_path": "SpectraQuest MFS dataset/IR2_1200.mat",
+      "rig": "spectraquest",
+      "label": 0,
+      "nominal_rpm": 1200,
+      "bytes": 1928530,
+      "git_blob_sha": "61fd82ce9785aaeb36a53fd1eb640d672d057b98",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/IR2_1200.mat"
+    },
+    {
+      "filename": "spectraquest__IR2_600.mat",
+      "upstream_path": "SpectraQuest MFS dataset/IR2_600.mat",
+      "rig": "spectraquest",
+      "label": 0,
+      "nominal_rpm": 600,
+      "bytes": 1827841,
+      "git_blob_sha": "ab1cd1fc63cd54218708fd5e137ce02a0c0d7fd8",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/IR2_600.mat"
+    },
+    {
+      "filename": "spectraquest__IR2_900.mat",
+      "upstream_path": "SpectraQuest MFS dataset/IR2_900.mat",
+      "rig": "spectraquest",
+      "label": 0,
+      "nominal_rpm": 900,
+      "bytes": 1902014,
+      "git_blob_sha": "42863f53aea6597956738919153789a0269dfc9a",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/IR2_900.mat"
+    },
+    {
+      "filename": "spectraquest__IR5_1200.mat",
+      "upstream_path": "SpectraQuest MFS dataset/IR5_1200.mat",
+      "rig": "spectraquest",
+      "label": 0,
+      "nominal_rpm": 1200,
+      "bytes": 1933486,
+      "git_blob_sha": "7233d36a2576f170f654e34c776bae8280715d2a",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/IR5_1200.mat"
+    },
+    {
+      "filename": "spectraquest__IR5_600.mat",
+      "upstream_path": "SpectraQuest MFS dataset/IR5_600.mat",
+      "rig": "spectraquest",
+      "label": 0,
+      "nominal_rpm": 600,
+      "bytes": 1887562,
+      "git_blob_sha": "e268325cf9030b84bfb7dfe6f3d0b19397a315a4",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/IR5_600.mat"
+    },
+    {
+      "filename": "spectraquest__IR5_900.mat",
+      "upstream_path": "SpectraQuest MFS dataset/IR5_900.mat",
+      "rig": "spectraquest",
+      "label": 0,
+      "nominal_rpm": 900,
+      "bytes": 1921425,
+      "git_blob_sha": "6c3273e59982034b246410188c5f8a5d75a7e4c0",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/IR5_900.mat"
+    },
+    {
+      "filename": "spectraquest__IR8_1200.mat",
+      "upstream_path": "SpectraQuest MFS dataset/IR8_1200.mat",
+      "rig": "spectraquest",
+      "label": 0,
+      "nominal_rpm": 1200,
+      "bytes": 1922865,
+      "git_blob_sha": "7a2882e78b98a56f013d66d03f121cd144a4f54e",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/IR8_1200.mat"
+    },
+    {
+      "filename": "spectraquest__IR8_600.mat",
+      "upstream_path": "SpectraQuest MFS dataset/IR8_600.mat",
+      "rig": "spectraquest",
+      "label": 0,
+      "nominal_rpm": 600,
+      "bytes": 1845688,
+      "git_blob_sha": "12201fa84f5f01f98623adef979607ddfffcc1d1",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/IR8_600.mat"
+    },
+    {
+      "filename": "spectraquest__IR8_900.mat",
+      "upstream_path": "SpectraQuest MFS dataset/IR8_900.mat",
+      "rig": "spectraquest",
+      "label": 0,
+      "nominal_rpm": 900,
+      "bytes": 1910381,
+      "git_blob_sha": "eb724b912c57026b238d26f4c46482266c73ed4a",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/IR8_900.mat"
+    },
+    {
+      "filename": "spectraquest__Normal_1200.mat",
+      "upstream_path": "SpectraQuest MFS dataset/Normal_1200.mat",
+      "rig": "spectraquest",
+      "label": 3,
+      "nominal_rpm": 1200,
+      "bytes": 1071633,
+      "git_blob_sha": "a992a31f54a90b2aeeab1bac029cd38ef344da1f",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/Normal_1200.mat"
+    },
+    {
+      "filename": "spectraquest__Normal_600.mat",
+      "upstream_path": "SpectraQuest MFS dataset/Normal_600.mat",
+      "rig": "spectraquest",
+      "label": 3,
+      "nominal_rpm": 600,
+      "bytes": 1058799,
+      "git_blob_sha": "56659157639fad86af0b3e928ee8d308f7388d0a",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/Normal_600.mat"
+    },
+    {
+      "filename": "spectraquest__Normal_900.mat",
+      "upstream_path": "SpectraQuest MFS dataset/Normal_900.mat",
+      "rig": "spectraquest",
+      "label": 3,
+      "nominal_rpm": 900,
+      "bytes": 1040748,
+      "git_blob_sha": "110d5def69e81f94ce23fe1ada448da1e5e32e1f",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/Normal_900.mat"
+    },
+    {
+      "filename": "spectraquest__OR2_1200.mat",
+      "upstream_path": "SpectraQuest MFS dataset/OR2_1200.mat",
+      "rig": "spectraquest",
+      "label": 1,
+      "nominal_rpm": 1200,
+      "bytes": 1931859,
+      "git_blob_sha": "ad9115b42f1edc95a7a3f870a3c2f2a0d9f6eb7f",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/OR2_1200.mat"
+    },
+    {
+      "filename": "spectraquest__OR2_600.mat",
+      "upstream_path": "SpectraQuest MFS dataset/OR2_600.mat",
+      "rig": "spectraquest",
+      "label": 1,
+      "nominal_rpm": 600,
+      "bytes": 1886512,
+      "git_blob_sha": "af0d80b27e949544a331fb5e722242318f1010da",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/OR2_600.mat"
+    },
+    {
+      "filename": "spectraquest__OR2_900.mat",
+      "upstream_path": "SpectraQuest MFS dataset/OR2_900.mat",
+      "rig": "spectraquest",
+      "label": 1,
+      "nominal_rpm": 900,
+      "bytes": 1918858,
+      "git_blob_sha": "cfddcc881216b9be059acb4cce75f5957f1f96db",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/OR2_900.mat"
+    },
+    {
+      "filename": "spectraquest__OR5_1200.mat",
+      "upstream_path": "SpectraQuest MFS dataset/OR5_1200.mat",
+      "rig": "spectraquest",
+      "label": 1,
+      "nominal_rpm": 1200,
+      "bytes": 1928552,
+      "git_blob_sha": "403906597efefa77304eb5903e739455f7d8b1d9",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/OR5_1200.mat"
+    },
+    {
+      "filename": "spectraquest__OR5_600.mat",
+      "upstream_path": "SpectraQuest MFS dataset/OR5_600.mat",
+      "rig": "spectraquest",
+      "label": 1,
+      "nominal_rpm": 600,
+      "bytes": 1885255,
+      "git_blob_sha": "dcaade9361af0804293cf67b8e987acd7970d739",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/OR5_600.mat"
+    },
+    {
+      "filename": "spectraquest__OR5_900.mat",
+      "upstream_path": "SpectraQuest MFS dataset/OR5_900.mat",
+      "rig": "spectraquest",
+      "label": 1,
+      "nominal_rpm": 900,
+      "bytes": 1926364,
+      "git_blob_sha": "3385bba0e53aa315205087a790fcc1ab645cf5a4",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/OR5_900.mat"
+    },
+    {
+      "filename": "spectraquest__OR8_1200.mat",
+      "upstream_path": "SpectraQuest MFS dataset/OR8_1200.mat",
+      "rig": "spectraquest",
+      "label": 1,
+      "nominal_rpm": 1200,
+      "bytes": 1929323,
+      "git_blob_sha": "6d30773e273f39f5b94ed2bbcdb48f7384ed1f8f",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/OR8_1200.mat"
+    },
+    {
+      "filename": "spectraquest__OR8_600.mat",
+      "upstream_path": "SpectraQuest MFS dataset/OR8_600.mat",
+      "rig": "spectraquest",
+      "label": 1,
+      "nominal_rpm": 600,
+      "bytes": 1857838,
+      "git_blob_sha": "a4e6cdedb8f9f95b603346dc5d769e27934db18d",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/OR8_600.mat"
+    },
+    {
+      "filename": "spectraquest__OR8_900.mat",
+      "upstream_path": "SpectraQuest MFS dataset/OR8_900.mat",
+      "rig": "spectraquest",
+      "label": 1,
+      "nominal_rpm": 900,
+      "bytes": 1918429,
+      "git_blob_sha": "c7519b10f3c811bcaf07bf83010c65ae06ad7c48",
+      "url": "https://raw.githubusercontent.com/hitwzc/Bearing-datasets/12e46cd1b4a40f396c2bd6e245be5bafe18b1989/SpectraQuest%20MFS%20dataset/OR8_900.mat"
+    }
+  ]
+}

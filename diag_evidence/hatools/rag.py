@@ -15,7 +15,8 @@ MAX_RAG_RESULTS = 100
 MAX_CASE_TEXT_CHARS = 16_384
 MAX_METADATA_CHARS = 2_000
 _CONTEXT_FIELDS = ("asset_id", "component", "channel", "units", "window_start",
-                   "window_end", "preprocessing_id")
+                   "window_end", "preprocessing_id", "sampling_rate",
+                   "available_at", "evidence_role")
 
 
 class RAGResponseError(ValueError):
@@ -75,9 +76,11 @@ def _normalize_results(results: List[Dict[str, Any]], score_metadata: dict | Non
         if not item["text"].strip():
             continue
         raw_meta = item.get("meta") if isinstance(item.get("meta"), dict) else {}
+        if "evidence_role" in raw_meta and not isinstance(raw_meta["evidence_role"], str):
+            raise RAGResponseError("案例证据角色类型无效")
         allowed_meta = ("fault_type", "label", "record_id", "source_id", "case_id", "asset_id",
                         "component", "channel", "units", "window_start", "window_end", "as_of",
-                        "available_at", "preprocessing_id", "score_type")
+                        "available_at", "preprocessing_id", "score_type", "evidence_role")
         for key in allowed_meta:
             if isinstance(raw_meta.get(key), str):
                 if len(raw_meta[key]) > MAX_METADATA_CHARS:
@@ -114,6 +117,8 @@ def _normalize_results(results: List[Dict[str, Any]], score_metadata: dict | Non
             meta["record_id"] = record_id
         text = _common.redact_text(item["text"])
         context = {key: meta[key] for key in _CONTEXT_FIELDS if key in meta}
+        # Explicit and implicit historical-reference roles share an identity.
+        context.setdefault("evidence_role", "historical_reference")
         stable_content = {"source_id": source_id, "record_id": record_id,
                           "context": context, "text": " ".join(text.split())}
         content_key = _digest(stable_content)

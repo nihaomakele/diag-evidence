@@ -1,5 +1,7 @@
 # 发布 DiagEvidence v0.1.1
 
+> 本文件保留v0.1.1历史发布说明。当前0.2开发版验证见[NEXT_VALIDATION.md](NEXT_VALIDATION.md)，尚未创建新的正式版本。
+
 本目录是研究预览发布源。GitHub源码仓库为 [nihaomakele/diag-evidence](https://github.com/nihaomakele/diag-evidence)，创建时采用私有可见性；后续可见性以GitHub显示为准。项目尚未发布到PyPI。公开范围仅为本项目源码与检查过的分发包，不包含原私有快照、研究PDF、模型实验、运行日志或聊天材料。
 
 ## 干净的来源与历史
