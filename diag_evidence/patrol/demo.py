@@ -1,4 +1,5 @@
 """Portable offline replay artifacts for fleet patrol demonstrations."""
+from dataclasses import asdict
 from importlib.resources import files
 import json
 from pathlib import Path
@@ -9,16 +10,25 @@ from .models import scenario_to_dict
 from .simulator import simulate
 
 
-def run_demo(scenario, output_dir='artifacts/patrol', *, allocator='matching', write=True):
+def run_demo(scenario, output_dir='artifacts/patrol', *, allocator='matching', write=True,
+             execution=None, drop_completion_reports=False):
     if type(write) is not bool:
         raise ValueError('Invalid patrol output control')
-    runs = {policy: simulate(scenario, policy=policy, allocator=allocator, record=write) for policy in POLICIES}
+    runs = {policy: simulate(scenario, policy=policy, allocator=allocator, record=write,
+                             execution=execution, drop_completion_reports=drop_completion_reports)
+            for policy in POLICIES}
     summary = {'scenario': scenario.name, 'mission': scenario.mission, 'allocator': allocator,
                'metrics': {name: run['metrics'] for name, run in runs.items()}}
+    controls = {}
+    if execution is not None:
+        controls['execution'] = asdict(execution)
+    if drop_completion_reports:
+        controls['drop_completion_reports'] = True
+    summary.update(controls)
     if write:
         output = Path(output_dir) / ('patrol-' + uuid.uuid4().hex[:12])
         output.mkdir(parents=True, exist_ok=False)
-        data = {'format': 'patrol-replay/v1', 'scenario': scenario_to_dict(scenario), 'runs': runs}
+        data = {'format': 'patrol-replay/v1', 'scenario': scenario_to_dict(scenario), 'runs': runs, **controls}
         write_json(output / 'scenario.json', data['scenario'])
         write_json(output / 'runs.json', data)
         write_json(output / 'summary.json', summary)

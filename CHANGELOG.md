@@ -2,6 +2,13 @@
 
 This file records changes to the public research-preview source tree.
 
+## 0.3.0.dev1 — Patrol execution confirmation
+
+- Add opt-in numbered dispatches, acknowledgments, duplicate suppression,
+  cached results, status queries and timeout reassignment.
+- Expose completion-report loss, attempt events and confirmation metrics in the
+  CLI and replay. Add four regression tests and a 200-run paired comparison.
+
 ## 0.3.0.dev0 — Online multi-robot patrol
 
 - Add typed mission contracts, A* routing, greedy and exact bounded one-step

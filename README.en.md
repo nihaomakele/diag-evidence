@@ -1,6 +1,6 @@
 # DiagEvidence Patrol
 
-Online multi-robot patrol scheduling, evidence checks and reproducible replay. Development version: **0.3.0.dev0**.
+Online multi-robot patrol scheduling, evidence checks and reproducible replay. Development version **0.3.0.dev1**.
 
 The centralized simulator closes the loop from asynchronous observations to assignment, A* movement, service execution and updated observations. It includes task releases/deadlines/priorities, energy reserves, outages, traffic arbitration and replanning.
 
@@ -19,6 +19,8 @@ Open the returned `replay_path` in a browser. The portable HTML includes synchro
 
 Choose `--allocator greedy` for the greedy control, or `--config examples/patrol_mission.json` for a custom mission. The exact matching allocator maximizes one-step additive assignment utility with idle actions, bounded to 8 robots and 64 tasks. Paths use four-neighbor A* and static-route caching; execution reserves cells, prevents edge swaps and replans around traffic.
 
+Select `--execution confirmed` for numbered dispatches, acknowledgments, status probes and timeout recovery. Add `--drop-completion-reports` to test status recovery when unsolicited completion reports are lost. [Design and paired results](docs/patrol_execution.md)
+
 ## Evaluation
 
 ```bash
@@ -31,6 +33,6 @@ Eight scenarios, two allocators and three information policies across 40 seeds p
 
 See [design and assumptions](docs/patrol_scheduling.md), [project explanation](docs/patrol_project_story.md) and [full results](docs/results/patrol_20261102.json).
 
-The first version models a known static 2D grid, reliable current robot state and asynchronous task-state observations. Motion and energy use discrete units. Planned adapters target task acknowledgements/idempotency, ROS2 navigation and distributed allocation.
+The simulator models a known static 2D grid, reliable current robot state and asynchronous task-state observations. Motion and energy use discrete units. The execution model delivers dispatch acknowledgments and stops synchronously and sends status replies over a simulated delayed link.
 
 The diagnostic workflow and bearing benchmarks remain available as earlier modules. `diag-evidence demo --scenario all --no-write` runs the diagnostic contract scenarios. The published v0.1.1 tag is preserved. Code: MIT; data terms are recorded separately in [provenance](DATA_PROVENANCE.md).

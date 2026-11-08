@@ -33,6 +33,8 @@ const horizon=data.scenario.horizon;let tick=0,playing=false,last=0;
 const panels={};
 function element(tag,text,cls){const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x}
 document.getElementById('context').textContent=`场景：${scenarioNames[data.scenario.name]||data.scenario.name} ｜ 任务轮次：${data.scenario.mission} ｜ 分配器：${data.runs.verified.allocator==='matching'?'精确单步匹配':'贪心分配'} ｜ ${data.scenario.robots.length}台机器人 / ${data.scenario.tasks.length}个任务`;
+if(data.execution) document.getElementById('context').textContent += ' ｜ 执行确认';
+if(data.drop_completion_reports) document.getElementById('context').textContent += ' ｜ 主动完工回执丢失';
 for(const policy of policies){
  const panel=element('section',undefined,'panel'),head=element('header');head.append(element('h2',labels[policy]),element('p',descriptions[policy],'muted'));panel.append(head);
  const canvas=element('canvas');canvas.setAttribute('aria-label',labels[policy]+'的任务地图');canvas.setAttribute('role','img');panel.append(canvas);
@@ -41,6 +43,12 @@ for(const policy of policies){
  const events=element('div',undefined,'events');events.setAttribute('aria-label',labels[policy]+'的近期事件');panel.append(events);document.getElementById('panels').append(panel);panels[policy]={canvas,stats,body,events};
 }
 const rows=[['按时完成任务',m=>`${m.on_time_completed} / ${m.tasks}`],['优先级加权完成率',m=>(100*m.weighted_on_time_rate).toFixed(1)+'%'],['移动步数',m=>m.travel_steps],['能量消耗',m=>m.energy_used],['重复复检次数',m=>m.reinspections],['故障后重新派工',m=>m.reassignments_after_outage],['交通等待步数',m=>m.traffic_waits],['拦截消息数',m=>Object.values(m.message_rejections).reduce((a,b)=>a+b,0)],['消息载荷字节',m=>m.message_payload_bytes]];
+if(data.execution) rows.push(
+ ['执行已确认',m=>m.execution_confirmed],
+ ['主动查询次数',m=>m.execution_queries],
+ ['超时重派次数',m=>m.reassignments_after_timeout],
+ ['执行消息载荷字节',m=>m.execution_payload_bytes]
+);
 for(const [title,format] of rows){const tr=element('tr');tr.append(element('th',title));for(const p of policies)tr.append(element('td',String(format(data.runs[p].metrics))));document.getElementById('summary').append(tr)}
 function draw(canvas,run,frame){
  const ratio=window.devicePixelRatio||1,w=canvas.clientWidth,h=w*run.grid.height/run.grid.width;
@@ -53,12 +61,24 @@ function draw(canvas,run,frame){
  for(const t of frame.tasks){const x=(t.cell[0]+.5)*unit,y=(t.cell[1]+.5)*unit,done=t.completed_at!==null&&t.completed_at<=tick;c.fillStyle=done?'#15803d':tick<t.release?'#94a3b8':tick>t.deadline?'#b91c1c':'#b45309';c.beginPath();c.arc(x,y,unit*.2,0,Math.PI*2);c.fill();if(t.belief==='completed'){c.beginPath();c.arc(x,y,unit*.34,0,Math.PI*2);c.setLineDash([2,2]);c.strokeStyle=done?'#15803d':'#b91c1c';c.lineWidth=1.5;c.stroke();c.setLineDash([])}c.fillStyle='#1f2937';c.font=`${Math.max(9,unit*.42)}px sans-serif`;c.fillText(t.id,x+unit*.23,y-unit*.21)}
  for(const [i,r] of frame.robots.entries()){const x=(r.cell[0]+.5)*unit,y=(r.cell[1]+.5)*unit;c.fillStyle=r.status==='down'?'#64748b':colors[i%colors.length];c.beginPath();c.arc(x,y,unit*.34,0,Math.PI*2);c.fill();c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.font=`bold ${Math.max(8,unit*.39)}px sans-serif`;c.fillText(r.id,x,y);c.textAlign='left';c.textBaseline='alphabetic'}
 }
-function eventText(e){let text='';switch(e.kind){case'assigned':text=`${e.robot} → ${e.task}，派工评分 ${e.utility}`;break;case'report_rejected':text=`拦截 ${e.task}：${reasons[e.reason]||e.reason}`;break;case'report_received':text=`收到 ${e.origin} 的 ${e.task} ${e.state==='completed'?'完工':'待办'}观测（观测时刻 ${e.observed_at}）`;break;case'task_completed':text=`${e.robot} 完成 ${e.task}`;break;case'task_reinspected':text=`${e.robot} 复检 ${e.task}`;break;case'robot_down':text=`${e.robot} 暂时故障`;break;case'robot_recovered':text=`${e.robot} 恢复可用`;break;case'assignment_interrupted':text=`${e.robot} 的 ${e.task} 执行中断`;break;case'reassigned_after_outage':text=`${e.task} 重新派给 ${e.robot}`;break;case'assignment_cancelled':text=`根据完工消息取消 ${e.robot} 的 ${e.task}`;break;default:text=e.kind}return `t=${e.tick}  ${text}`}
+const executionEvents={
+ dispatch_acknowledged:'接单确认',dispatch_duplicate:'忽略重复派工',
+ execution_queried:'查询执行状态',execution_confirmed:'确认完工',
+ execution_timed_out:'查询超时',execution_reassigned_after_timeout:'超时重新派工',
+ execution_stale_reply:'忽略旧派工回执',execution_duplicate_reply:'忽略重复回执',
+ execution_result_dropped:'主动完工回执丢失',execution_still_running:'查询显示仍在执行',
+ execution_closed:'关闭执行',completion_report_dropped:'主动完工报告丢失'
+};
+function eventText(e){let text='';switch(e.kind){case'assigned':text=`${e.robot} → ${e.task}，派工评分 ${e.utility}`;break;case'report_rejected':text=`拦截 ${e.task}：${reasons[e.reason]||e.reason}`;break;case'report_received':text=`收到 ${e.origin} 的 ${e.task} ${e.state==='completed'?'完工':'待办'}观测（观测时刻 ${e.observed_at}）`;break;case'task_completed':text=`${e.robot} 完成 ${e.task}`;break;case'task_reinspected':text=`${e.robot} 复检 ${e.task}`;break;case'robot_down':text=`${e.robot} 暂时故障`;break;case'robot_recovered':text=`${e.robot} 恢复可用`;break;case'assignment_interrupted':text=`${e.robot} 的 ${e.task} 执行中断`;break;case'reassigned_after_outage':text=`${e.task} 重新派给 ${e.robot}`;break;case'assignment_cancelled':text=`根据完工消息取消 ${e.robot} 的 ${e.task}`;break;default:text=executionEvents[e.kind]?`${executionEvents[e.kind]} ${e.task}${e.attempt===undefined?'':` #${e.attempt}`}`:e.kind}return `t=${e.tick}  ${text}`}
 function render(){
  document.getElementById('tick').textContent=`时刻 ${tick} / ${horizon}`;document.getElementById('scrub').value=tick;
  for(const p of policies){const run=data.runs[p],frame=run.frames[tick],ui=panels[p];draw(ui.canvas,run,frame);
  const actual=frame.tasks.filter(t=>t.completed_at!==null&&t.completed_at<=tick).length,believed=frame.tasks.filter(t=>t.belief==='completed').length,conflicts=frame.tasks.filter(t=>t.belief==='conflict').length;
  ui.stats.textContent=`实际完成 ${actual} ｜ 系统判定完成 ${believed} ｜ 观测冲突 ${conflicts}`;ui.body.replaceChildren();
+ if(frame.execution_leases){
+  const waiting=frame.tasks.filter(t=>frame.execution_leases[t.id]&&!t.assigned_to).length;
+  ui.stats.textContent+=` ｜ 等待确认 ${waiting}`;
+ }
  for(const r of frame.robots){const tr=element('tr');for(const text of [r.id,r.task||'—',r.battery,r.status==='down'?'故障':r.task?'执行中':r.path.length?'回位':'待命'])tr.append(element('td',String(text)));ui.body.append(tr)}
  ui.events.replaceChildren();const recent=run.events.filter(e=>e.tick<=tick&&e.tick>=tick-5).slice(-9);if(!recent.length)ui.events.append(element('p','当前没有新事件','muted'));for(const e of recent)ui.events.append(element('p',eventText(e),e.kind==='report_rejected'||e.kind.includes('interrupted')?'important':''));
  }
@@ -67,7 +87,8 @@ function pause(){playing=false;document.getElementById('play').textContent='播�
 document.getElementById('scrub').max=horizon;document.getElementById('scrub').addEventListener('input',e=>{pause();tick=Number(e.target.value);render()});
 document.getElementById('play').addEventListener('click',()=>{if(playing){pause()}else{if(tick===horizon)tick=0;playing=true;last=performance.now();document.getElementById('play').textContent='暂停';render()}});
 document.getElementById('back').addEventListener('click',()=>{pause();tick=Math.max(0,tick-1);render()});document.getElementById('next').addEventListener('click',()=>{pause();tick=Math.min(horizon,tick+1);render()});
-document.getElementById('anomaly').addEventListener('click',()=>{pause();const future=data.runs.verified.events.find(e=>e.tick>tick&&(e.kind==='report_rejected'||e.kind==='assignment_interrupted'));tick=future?future.tick:0;render()});
+const anomalies=new Set(['report_rejected','assignment_interrupted','execution_result_dropped','completion_report_dropped','execution_timed_out','execution_stale_reply']);
+document.getElementById('anomaly').addEventListener('click',()=>{pause();const future=data.runs.verified.events.find(e=>e.tick>tick&&anomalies.has(e.kind));tick=future?future.tick:0;render()});
 function loop(now){if(playing&&now-last>=1000/Number(document.getElementById('speed').value)){tick=Math.min(horizon,tick+1);last=now;if(tick===horizon)pause();render()}requestAnimationFrame(loop)}
 window.addEventListener('resize',render);render();requestAnimationFrame(loop);
 </script></body></html>
