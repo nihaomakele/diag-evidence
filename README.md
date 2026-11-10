@@ -2,7 +2,7 @@
 
 **多机器人协同巡检：在线任务分配、信息核验与可回放评估。**
 
-当前开发版 **0.3.0.dev0**。在二维栅格中，机器人接收任务、避障移动、执行巡检，并在消息到达或机器人故障后更新派工。核验直接参与每次调度决策。
+当前开发版 **0.3.0.dev3**。在二维栅格中，机器人接收任务、避障移动、执行巡检，并在消息到达或机器人故障后更新派工。核验直接参与每次调度决策。
 
 [English](README.en.md) · [调度设计](docs/patrol_scheduling.md) · [项目讲解与面试准备](docs/patrol_project_story.md) · [实验记录](NEXT_VALIDATION.md)
 
@@ -20,6 +20,12 @@ diag-evidence patrol-demo --scenario mixed --seed 7 --output-dir artifacts/patro
 Windows PowerShell使用`.venv\Scripts\Activate.ps1`激活。命令输出`replay_path`：用浏览器打开该HTML，即可播放、暂停、逐步查看或拖动时间轴，同步比较三种策略。页面内含全部数据，可离线使用。也可用`python -m diag_evidence`代替`diag-evidence`。
 
 默认示例为3台机器人、8个任务。混合扰动、种子7中，直接采用消息按时完成4项，核验后完成8项。任务轮次、位置布局与扰动脚本在三种策略间保持一致。
+
+使用 `--execution confirmed` 可启用接单确认、在途预约、完工状态查询和超时重派。报告延迟场景可加 `--drop-completion-reports`，观察调度器如何查询缓存结果。[执行确认设计与实验](docs/patrol_execution.md)
+
+使用 `--traffic yield` 可在迎面僵持时为一台机器人重新规划，另一台保留路线。延迟场景的种子 42 和 48 都从按时完成 6 项恢复到 8 项。[让行设计与 400 次配对仿真](docs/patrol_traffic.md)
+
+使用 `--execution confirmed --inspection examples/patrol_inspection.json` 可在诊断告警到达后自动派发高优先级复检，并在执行确认后更新设备状态。[诊断接入与配对实验](docs/patrol_inspection.md)
 
 ## 系统流程
 
@@ -58,7 +64,7 @@ flowchart LR
 | 新鲜错误观测 | 87.50% | 87.50% | 98.75% |
 | 混合扰动 | 49.38% | 99.38% | 99.38% |
 
-正常与故障场景的两种策略表现接近；旧轮次、重放和冲突消息改变了候选任务集合，从而影响任务完成。延迟场景中两种策略平均复检33.3次、能量消耗221.35单位，任务确认与幂等处理是下一步工程重点。
+正常与故障场景的两种策略表现接近。旧轮次、重放和冲突消息改变了候选任务集合，从而影响任务完成。首轮延迟场景中两种策略平均复检33.3次。执行确认模式使用另一组布局检验这一问题，平均复检从32.55次降到0，按时完成率从100%变为97.5%。[执行确认对照数据](docs/results/patrol_execution_20261108.json)
 
 [完整机器可读结果](docs/results/patrol_20261102.json) · [方法与假设](docs/patrol_scheduling.md)
 
@@ -82,12 +88,13 @@ diag-evidence patrol-evaluate --split held_out --freeze artifacts/patrol-freeze.
 | `patrol/evidence.py` | 决策前的信息接收与核验 |
 | `patrol/planning.py` | A*与贪心/精确单步分配 |
 | `patrol/simulator.py` | 物理执行、消息队列与调度反馈 |
+| `patrol/execution.py` | 派工编号、状态查询、超时与回执校验 |
 | `patrol/evaluation.py` | 配对实验、冻结与指标汇总 |
 | `patrol/demo.py` | 可复现输入、轨迹与离线动画导出 |
 
 ## 版本与扩展
 
-首版采用集中式调度、已知静态地图及可靠的机器人位置/能量状态，巡检结果经异步消息到达。移动和能耗以离散单位计算。后续按任务确认、ROS2状态/导航适配、分布式分配的顺序扩展。
+巡检采用集中式调度、已知静态地图及可靠的机器人位置/能量状态，巡检结果经异步消息到达。移动和能耗以离散单位计算。执行确认模式模拟同步接单与停止，查询和完工回执通过模拟链路送达。
 
 原有振动诊断工具链与真实数据研究保留在`DiagnosisAgent`和`benchmarks/`，作为工具接入与证据核验的历史模块。诊断演示使用`diag-evidence demo --scenario all --no-write`；相关接口见[契约文档](docs/contracts.md)。已发布标签v0.1.1继续保留。
 

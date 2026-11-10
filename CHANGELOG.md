@@ -2,6 +2,26 @@
 
 This file records changes to the public research-preview source tree.
 
+## 0.3.0.dev3 — Diagnosis-triggered inspection
+
+- Read structured DiagnosisAgent results to schedule reinspection tasks at
+  alert arrival. Track device status after the existing completion handshake.
+- Add an example fixture, alarm-policy comparison and three regression tests.
+
+## 0.3.0.dev2 — Head-on traffic yielding
+
+- Add an optional single-robot detour for blocked head-on pairs with
+  deterministic priority and a return-energy check.
+- Add yield events to the replay and verify the two reported failures
+  in a 400-run traffic comparison with execution confirmation fixed.
+
+## 0.3.0.dev1 — Patrol execution confirmation
+
+- Add opt-in numbered dispatches, acknowledgments, duplicate suppression,
+  cached results, status queries and timeout reassignment.
+- Expose completion-report loss, attempt events and confirmation metrics in the
+  CLI and replay. Add four regression tests and a 200-run paired comparison.
+
 ## 0.3.0.dev0 — Online multi-robot patrol
 
 - Add typed mission contracts, A* routing, greedy and exact bounded one-step

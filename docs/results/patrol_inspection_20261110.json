@@ -1,0 +1,80 @@
+{
+  "format": "patrol-inspection-comparison/v1",
+  "protocol": {
+    "seeds": [
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99
+    ],
+    "scenario": "clean",
+    "alarm_policies": [
+      "all",
+      "verified"
+    ],
+    "fixture_sha256": "e21da39c40e8fad79d0e5b050e0e14118490cc8342a8bcb6415264fa0b7fb983",
+    "observation_policy": "verified",
+    "allocator": "matching",
+    "traffic": "yield",
+    "execution": {
+      "confirmation_timeout": 4,
+      "probe_timeout": 16,
+      "repeat_dispatch": false
+    },
+    "source_sha256": {
+      "__init__.py": "b26d32666302dcf438da0d1300809a805d6ccd5db8437495affce84781b8a5b9",
+      "models.py": "3b3389f57eab0b1b82a1997128e8e4f59219dac3dc77accc0a44667de177c9d5",
+      "planning.py": "ce9b8e74a33accfd626d9d8178e065dd79ebe651a20c5a19f1766d54c28ee5f5",
+      "evidence.py": "fb8a5963774c2f9119567a5577dd6bc1b8174f670f3c6f5275f210398d2b283c",
+      "scenarios.py": "be550bd8e6f4a802eb5201d33eee0269b4de5b0940a4c5120f4b14a12cb18ce8",
+      "simulator.py": "25f17a87adf0b6c08c756fa493be6bbac0c1e18c22b3d8e36e1f452920f48703",
+      "evaluation.py": "59ad63261d0882450bb827f77f35baa34abeaad0403fdd6e92eb90e0a4a32a5b",
+      "execution.py": "3c2082b2adec3a07b1a5688a6885b63bc42a249c2c7a28c385855ea76a93e153",
+      "inspection.py": "7fe24e8c2bcbe85b66ad10cfe7452b5cbd872c7487b5e2c0bd1166233f12637b"
+    }
+  },
+  "summary": {
+    "runs": 40,
+    "pairs": 20,
+    "means": {
+      "all": {
+        "inspection_tasks": 4,
+        "inspection_on_time": 3.95,
+        "inspection_confirmed": 3.95,
+        "inspection_fault_findings": 1.95,
+        "inspection_normal_findings": 2,
+        "routine_on_time": 8,
+        "energy_used": 164.5,
+        "traffic_waits": 3.4,
+        "collision_count": 0
+      },
+      "verified": {
+        "inspection_tasks": 2,
+        "inspection_on_time": 1.9,
+        "inspection_confirmed": 2,
+        "inspection_fault_findings": 1,
+        "inspection_normal_findings": 1,
+        "routine_on_time": 8,
+        "energy_used": 153.1,
+        "traffic_waits": 4.25,
+        "collision_count": 0
+      }
+    }
+  }
+}

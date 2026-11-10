@@ -1,0 +1,190 @@
+{
+  "format": "patrol-execution-comparison/v1",
+  "protocol": {
+    "created_at": "2026-11-08T11:44:52.324080+00:00",
+    "baseline_commit": "e0f6f4a67e29bf36e8e004564fe061677dcc2cdf",
+    "source_sha256": {
+      "__init__.py": "b26d32666302dcf438da0d1300809a805d6ccd5db8437495affce84781b8a5b9",
+      "models.py": "3b3389f57eab0b1b82a1997128e8e4f59219dac3dc77accc0a44667de177c9d5",
+      "planning.py": "ce9b8e74a33accfd626d9d8178e065dd79ebe651a20c5a19f1766d54c28ee5f5",
+      "evidence.py": "fb8a5963774c2f9119567a5577dd6bc1b8174f670f3c6f5275f210398d2b283c",
+      "scenarios.py": "be550bd8e6f4a802eb5201d33eee0269b4de5b0940a4c5120f4b14a12cb18ce8",
+      "simulator.py": "f2e7096a8c14293677d012a99dac72c2addf2643e19ff3ceb9e43f5824b3b6bc",
+      "evaluation.py": "59ad63261d0882450bb827f77f35baa34abeaad0403fdd6e92eb90e0a4a32a5b",
+      "execution.py": "3c2082b2adec3a07b1a5688a6885b63bc42a249c2c7a28c385855ea76a93e153"
+    },
+    "profiles": {
+      "clean": [
+        "clean",
+        null,
+        false
+      ],
+      "delayed": [
+        "delayed",
+        null,
+        false
+      ],
+      "delayed_loss": [
+        "delayed",
+        null,
+        true
+      ],
+      "outage": [
+        "outage",
+        null,
+        false
+      ],
+      "long_delay": [
+        "delayed",
+        32,
+        false
+      ]
+    },
+    "seeds": [
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59
+    ],
+    "policy": "verified",
+    "allocator": "matching",
+    "confirmed_settings": {
+      "confirmation_timeout": 4,
+      "probe_timeout": 16,
+      "repeat_dispatch": false
+    }
+  },
+  "summary": {
+    "runs": 200,
+    "matched_inputs": 100,
+    "means": {
+      "clean": {
+        "legacy": {
+          "on_time_completion_rate": 0.975,
+          "reinspections": 0,
+          "energy_used": 141,
+          "reassignments_after_outage": 0,
+          "reassignments_after_timeout": null,
+          "execution_queries": null,
+          "execution_unconfirmed_completed": null,
+          "modeled_payload_bytes": 1175.85
+        },
+        "confirmed": {
+          "on_time_completion_rate": 0.975,
+          "reinspections": 0,
+          "energy_used": 141,
+          "reassignments_after_outage": 0,
+          "reassignments_after_timeout": 0,
+          "execution_queries": 2.85,
+          "execution_unconfirmed_completed": 0,
+          "modeled_payload_bytes": 2145.65
+        }
+      },
+      "delayed": {
+        "legacy": {
+          "on_time_completion_rate": 1.0,
+          "reinspections": 32.55,
+          "energy_used": 216.65,
+          "reassignments_after_outage": 0,
+          "reassignments_after_timeout": null,
+          "execution_queries": null,
+          "execution_unconfirmed_completed": null,
+          "modeled_payload_bytes": 6120.95
+        },
+        "confirmed": {
+          "on_time_completion_rate": 0.975,
+          "reinspections": 0,
+          "energy_used": 141,
+          "reassignments_after_outage": 0,
+          "reassignments_after_timeout": 0,
+          "execution_queries": 8.7,
+          "execution_unconfirmed_completed": 0,
+          "modeled_payload_bytes": 3072.35
+        }
+      },
+      "delayed_loss": {
+        "legacy": {
+          "on_time_completion_rate": 0.81875,
+          "reinspections": 78.05,
+          "energy_used": 290.3,
+          "reassignments_after_outage": 0,
+          "reassignments_after_timeout": null,
+          "execution_queries": null,
+          "execution_unconfirmed_completed": null,
+          "modeled_payload_bytes": 0
+        },
+        "confirmed": {
+          "on_time_completion_rate": 0.975,
+          "reinspections": 0,
+          "energy_used": 141,
+          "reassignments_after_outage": 0,
+          "reassignments_after_timeout": 0,
+          "execution_queries": 8.7,
+          "execution_unconfirmed_completed": 0,
+          "modeled_payload_bytes": 3072.35
+        }
+      },
+      "outage": {
+        "legacy": {
+          "on_time_completion_rate": 0.9875,
+          "reinspections": 0,
+          "energy_used": 137.9,
+          "reassignments_after_outage": 0.95,
+          "reassignments_after_timeout": null,
+          "execution_queries": null,
+          "execution_unconfirmed_completed": null,
+          "modeled_payload_bytes": 1191.1
+        },
+        "confirmed": {
+          "on_time_completion_rate": 0.9875,
+          "reinspections": 0,
+          "energy_used": 137.9,
+          "reassignments_after_outage": 0.95,
+          "reassignments_after_timeout": 0,
+          "execution_queries": 1.45,
+          "execution_unconfirmed_completed": 0,
+          "modeled_payload_bytes": 2061.8
+        }
+      },
+      "long_delay": {
+        "legacy": {
+          "on_time_completion_rate": 0.91875,
+          "reinspections": 62,
+          "energy_used": 273.65,
+          "reassignments_after_outage": 0,
+          "reassignments_after_timeout": null,
+          "execution_queries": null,
+          "execution_unconfirmed_completed": null,
+          "modeled_payload_bytes": 10494.55
+        },
+        "confirmed": {
+          "on_time_completion_rate": 0.99375,
+          "reinspections": 9.35,
+          "energy_used": 249.6,
+          "reassignments_after_outage": 0,
+          "reassignments_after_timeout": 9.5,
+          "execution_queries": 17.5,
+          "execution_unconfirmed_completed": 7.95,
+          "modeled_payload_bytes": 6571.75
+        }
+      }
+    },
+    "protocol_sha256": "0a0e0b286715f3e19191fce27128d4085d523207c4fd1f09567620fdc3d7fedf"
+  }
+}

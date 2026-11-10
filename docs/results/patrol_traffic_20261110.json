@@ -1,0 +1,356 @@
+{
+  "format": "patrol-traffic-comparison/v1",
+  "protocol": {
+    "started_at": "2026-11-10T01:50:56.268221+00:00",
+    "source_sha256": {
+      "__init__.py": "b26d32666302dcf438da0d1300809a805d6ccd5db8437495affce84781b8a5b9",
+      "models.py": "3b3389f57eab0b1b82a1997128e8e4f59219dac3dc77accc0a44667de177c9d5",
+      "planning.py": "ce9b8e74a33accfd626d9d8178e065dd79ebe651a20c5a19f1766d54c28ee5f5",
+      "evidence.py": "fb8a5963774c2f9119567a5577dd6bc1b8174f670f3c6f5275f210398d2b283c",
+      "scenarios.py": "be550bd8e6f4a802eb5201d33eee0269b4de5b0940a4c5120f4b14a12cb18ce8",
+      "simulator.py": "62c0c32b8cd456274058fb12a75bd3e5907e7780808733190db83fe4a9fa7f04",
+      "evaluation.py": "59ad63261d0882450bb827f77f35baa34abeaad0403fdd6e92eb90e0a4a32a5b",
+      "execution.py": "3c2082b2adec3a07b1a5688a6885b63bc42a249c2c7a28c385855ea76a93e153"
+    },
+    "profiles": {
+      "clean": [
+        "clean",
+        null,
+        false
+      ],
+      "delayed": [
+        "delayed",
+        null,
+        false
+      ],
+      "delayed_loss": [
+        "delayed",
+        null,
+        true
+      ],
+      "outage": [
+        "outage",
+        null,
+        false
+      ],
+      "long_delay": [
+        "delayed",
+        32,
+        false
+      ]
+    },
+    "splits": {
+      "seen": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59
+      ],
+      "new": [
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79
+      ]
+    },
+    "execution": {
+      "confirmation_timeout": 4,
+      "probe_timeout": 16,
+      "repeat_dispatch": false
+    },
+    "observation_policy": "verified",
+    "allocator": "matching"
+  },
+  "summary": {
+    "runs": 400,
+    "pairs": 200,
+    "results": {
+      "seen": {
+        "clean": {
+          "means": {
+            "legacy": {
+              "on_time_completion_rate": 0.975,
+              "reinspections": 0,
+              "energy_used": 141,
+              "traffic_waits": 18.35,
+              "traffic_replans": 8.25,
+              "static_path_searches": 68.5,
+              "traffic_yields": 0
+            },
+            "yield": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 0,
+              "energy_used": 140.1,
+              "traffic_waits": 3.25,
+              "traffic_replans": 0.65,
+              "static_path_searches": 36.7,
+              "traffic_yields": 0.2
+            }
+          },
+          "improved_pairs": 2,
+          "unchanged_pairs": 18,
+          "worse_pairs": 0
+        },
+        "delayed": {
+          "means": {
+            "legacy": {
+              "on_time_completion_rate": 0.975,
+              "reinspections": 0,
+              "energy_used": 141,
+              "traffic_waits": 18.35,
+              "traffic_replans": 8.25,
+              "static_path_searches": 68.5,
+              "traffic_yields": 0
+            },
+            "yield": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 0,
+              "energy_used": 140.1,
+              "traffic_waits": 3.25,
+              "traffic_replans": 0.65,
+              "static_path_searches": 36.7,
+              "traffic_yields": 0.2
+            }
+          },
+          "improved_pairs": 2,
+          "unchanged_pairs": 18,
+          "worse_pairs": 0
+        },
+        "delayed_loss": {
+          "means": {
+            "legacy": {
+              "on_time_completion_rate": 0.975,
+              "reinspections": 0,
+              "energy_used": 141,
+              "traffic_waits": 18.35,
+              "traffic_replans": 8.25,
+              "static_path_searches": 68.5,
+              "traffic_yields": 0
+            },
+            "yield": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 0,
+              "energy_used": 140.1,
+              "traffic_waits": 3.25,
+              "traffic_replans": 0.65,
+              "static_path_searches": 36.7,
+              "traffic_yields": 0.2
+            }
+          },
+          "improved_pairs": 2,
+          "unchanged_pairs": 18,
+          "worse_pairs": 0
+        },
+        "outage": {
+          "means": {
+            "legacy": {
+              "on_time_completion_rate": 0.9875,
+              "reinspections": 0,
+              "energy_used": 137.9,
+              "traffic_waits": 18.05,
+              "traffic_replans": 8.25,
+              "static_path_searches": 75.5,
+              "traffic_yields": 0
+            },
+            "yield": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 0,
+              "energy_used": 137.1,
+              "traffic_waits": 4.3,
+              "traffic_replans": 1.25,
+              "static_path_searches": 41.7,
+              "traffic_yields": 0.2
+            }
+          },
+          "improved_pairs": 1,
+          "unchanged_pairs": 19,
+          "worse_pairs": 0
+        },
+        "long_delay": {
+          "means": {
+            "legacy": {
+              "on_time_completion_rate": 0.99375,
+              "reinspections": 9.35,
+              "energy_used": 249.6,
+              "traffic_waits": 12,
+              "traffic_replans": 4.75,
+              "static_path_searches": 105.2,
+              "traffic_yields": 0
+            },
+            "yield": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 9.6,
+              "energy_used": 253.4,
+              "traffic_waits": 6.25,
+              "traffic_replans": 1.65,
+              "static_path_searches": 72.8,
+              "traffic_yields": 0.55
+            }
+          },
+          "improved_pairs": 1,
+          "unchanged_pairs": 19,
+          "worse_pairs": 0
+        }
+      },
+      "new": {
+        "clean": {
+          "means": {
+            "legacy": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 0,
+              "energy_used": 141.35,
+              "traffic_waits": 6.45,
+              "traffic_replans": 2.55,
+              "static_path_searches": 72.9,
+              "traffic_yields": 0
+            },
+            "yield": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 0,
+              "energy_used": 141.6,
+              "traffic_waits": 3.6,
+              "traffic_replans": 0.9,
+              "static_path_searches": 37.25,
+              "traffic_yields": 0.3
+            }
+          },
+          "improved_pairs": 0,
+          "unchanged_pairs": 20,
+          "worse_pairs": 0
+        },
+        "delayed": {
+          "means": {
+            "legacy": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 0,
+              "energy_used": 141.35,
+              "traffic_waits": 6.45,
+              "traffic_replans": 2.55,
+              "static_path_searches": 72.9,
+              "traffic_yields": 0
+            },
+            "yield": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 0,
+              "energy_used": 141.6,
+              "traffic_waits": 3.6,
+              "traffic_replans": 0.9,
+              "static_path_searches": 37.25,
+              "traffic_yields": 0.3
+            }
+          },
+          "improved_pairs": 0,
+          "unchanged_pairs": 20,
+          "worse_pairs": 0
+        },
+        "delayed_loss": {
+          "means": {
+            "legacy": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 0,
+              "energy_used": 141.35,
+              "traffic_waits": 6.45,
+              "traffic_replans": 2.55,
+              "static_path_searches": 72.9,
+              "traffic_yields": 0
+            },
+            "yield": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 0,
+              "energy_used": 141.6,
+              "traffic_waits": 3.6,
+              "traffic_replans": 0.9,
+              "static_path_searches": 37.25,
+              "traffic_yields": 0.3
+            }
+          },
+          "improved_pairs": 0,
+          "unchanged_pairs": 20,
+          "worse_pairs": 0
+        },
+        "outage": {
+          "means": {
+            "legacy": {
+              "on_time_completion_rate": 0.98125,
+              "reinspections": 0,
+              "energy_used": 146.6,
+              "traffic_waits": 16.95,
+              "traffic_replans": 7.8,
+              "static_path_searches": 83.95,
+              "traffic_yields": 0
+            },
+            "yield": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 0,
+              "energy_used": 147.9,
+              "traffic_waits": 3.35,
+              "traffic_replans": 0.9,
+              "static_path_searches": 44.55,
+              "traffic_yields": 0.25
+            }
+          },
+          "improved_pairs": 1,
+          "unchanged_pairs": 19,
+          "worse_pairs": 0
+        },
+        "long_delay": {
+          "means": {
+            "legacy": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 9.55,
+              "energy_used": 251,
+              "traffic_waits": 9.65,
+              "traffic_replans": 3.55,
+              "static_path_searches": 121.35,
+              "traffic_yields": 0
+            },
+            "yield": {
+              "on_time_completion_rate": 1.0,
+              "reinspections": 9.5,
+              "energy_used": 250.35,
+              "traffic_waits": 7.1,
+              "traffic_replans": 1.9,
+              "static_path_searches": 84.9,
+              "traffic_yields": 0.65
+            }
+          },
+          "improved_pairs": 0,
+          "unchanged_pairs": 20,
+          "worse_pairs": 0
+        }
+      }
+    }
+  }
+}

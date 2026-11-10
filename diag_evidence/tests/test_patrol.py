@@ -14,6 +14,7 @@ from diag_evidence.patrol.planning import astar, allocate
 from diag_evidence.patrol.evidence import EvidenceInbox
 from diag_evidence.patrol.scenarios import make_scenario, SCENARIOS
 from diag_evidence.patrol.simulator import simulate
+from diag_evidence.patrol.execution import ExecutionConfig
 from diag_evidence.patrol.demo import run_demo
 from diag_evidence.patrol.evaluation import evaluate_suite, freeze_experiment, source_hashes
 
@@ -221,6 +222,79 @@ class SimulationTests(unittest.TestCase):
         scenario = make_scenario('mixed', 7)
         self.assertEqual(simulate(scenario), simulate(scenario))
         self.assertEqual(simulate(scenario, record=False)['metrics'], simulate(scenario)['metrics'])
+
+
+class ExecutionConfirmationTests(unittest.TestCase):
+    def test_delayed_result_keeps_task_reserved_and_duplicate_dispatch_executes_once(self):
+        scenario = tiny(report_delay=6)
+        baseline = simulate(scenario)
+        run = simulate(scenario, execution=ExecutionConfig(repeat_dispatch=True))
+        self.assertGreater(baseline['metrics']['reinspections'], 0)
+        self.assertEqual(run['metrics']['completion_times'], {'T0': 4})
+        self.assertEqual(run['metrics']['reinspections'], 0)
+        self.assertEqual(run['metrics']['duplicate_dispatches_ignored'], 1)
+        self.assertEqual(run['metrics']['mean_confirmation_lag'], 6)
+        self.assertEqual(run['frames'][4]['tasks'][0]['completed_at'], 4)
+        self.assertEqual(run['frames'][4]['tasks'][0]['belief'], 'unknown')
+        self.assertIn('T0', run['frames'][4]['execution_leases'])
+        self.assertEqual(run['frames'][10]['tasks'][0]['belief'], 'completed')
+        self.assertEqual(run['frames'][10]['execution_leases'], {})
+
+    def test_dropped_completion_is_recovered_by_status_query(self):
+        scenario = tiny(report_delay=3)
+        run = simulate(scenario, execution=ExecutionConfig(), drop_completion_reports=True)
+        self.assertEqual(run['metrics']['completion_reports_dropped'], 1)
+        self.assertEqual(run['metrics']['reinspections'], 0)
+        self.assertEqual(run['metrics']['execution_queries'], 1)
+        self.assertEqual(run['metrics']['execution_confirmed'], 1)
+        self.assertEqual(run['metrics']['execution_unconfirmed_completed'], 0)
+        event, = [e for e in run['events'] if e['kind'] == 'execution_confirmed']
+        self.assertEqual((event['tick'], event['finished_at'], event['source']), (12, 4, 'probe'))
+
+    def test_timeout_reissues_with_new_attempt_and_late_result_cannot_cancel_it(self):
+        scenario = tiny(report_delay=8, horizon=31, tasks=(TaskSpec('T0', (4, 0), 0, 31, 4),))
+        run = simulate(scenario, execution=ExecutionConfig(confirmation_timeout=1, probe_timeout=2))
+        self.assertTrue(any(e['kind'] == 'execution_reassigned_after_timeout' and
+                            e['tick'] == 11 and e['attempt'] == 2 for e in run['events']))
+        self.assertTrue(any(e['kind'] == 'execution_stale_reply' and e['source'] == 'push'
+                            and e['tick'] == 16 and e['attempt'] == 1 for e in run['events']))
+        self.assertEqual(run['frames'][16]['robots'][0]['task'], 'T0')
+        self.assertEqual(run['frames'][16]['tasks'][0]['belief'], 'unknown')
+
+    def test_outage_closes_attempt_and_other_robot_takes_over(self):
+        scenario = tiny(robots=(RobotSpec('R0', (0, 0), 30), RobotSpec('R1', (0, 2), 30)),
+                        outages=(('R0', 1, 8),))
+        run = simulate(scenario, execution=ExecutionConfig())
+        first, second = [e for e in run['events'] if e['kind'] == 'assigned']
+        self.assertEqual((first['robot'], first['attempt']), ('R0', 1))
+        self.assertEqual((second['robot'], second['attempt']), ('R1', 2))
+        self.assertEqual(run['metrics']['reassignments_after_outage'], 1)
+        self.assertEqual(run['metrics']['execution_confirmed'], 1)
+        self.assertEqual(run['metrics']['reinspections'], 0)
+
+
+class TrafficYieldTests(unittest.TestCase):
+    def test_head_on_yield_breaks_symmetric_replanning_cycles(self):
+        for seed in (42, 48):
+            with self.subTest(seed=seed):
+                scenario = make_scenario('delayed', seed)
+                config = ExecutionConfig()
+                baseline = simulate(scenario, execution=config, record=False)
+                run = simulate(scenario, execution=config, traffic='yield')
+                self.assertEqual(baseline['metrics']['on_time_completed'], 6)
+                self.assertEqual(run['metrics']['on_time_completed'], 8)
+                self.assertEqual(run['metrics']['reinspections'], 0)
+                self.assertLess(run['metrics']['traffic_replans'], baseline['metrics']['traffic_replans'])
+                event, = [e for e in run['events'] if e['kind'] == 'traffic_yield']
+                before, after = [
+                    {r['id']: r for r in run['frames'][t]['robots']}
+                    for t in (event['tick'] - 1, event['tick'])
+                ]
+                yielder, keeper = event['robot'], event['keeper']
+                self.assertEqual(before[yielder]['path'][0], before[keeper]['cell'])
+                self.assertEqual(before[keeper]['path'][0], before[yielder]['cell'])
+                self.assertEqual(after[keeper]['path'], before[keeper]['path'])
+                self.assertNotEqual(after[yielder]['path'][0], before[yielder]['path'][0])
 
 
 class DeliveryTests(unittest.TestCase):

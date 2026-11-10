@@ -36,6 +36,15 @@ def main(argv=None) -> int:
     patrol_input.add_argument('--config', type=Path, help='Custom patrol mission JSON')
     patrol.add_argument('--seed', type=int, default=7)
     patrol.add_argument('--allocator', choices=['greedy', 'matching'], default='matching')
+    patrol.add_argument('--traffic', choices=['legacy', 'yield'], default='legacy',
+                        help='Resolve a blocked head-on pair with a single energy-feasible detour')
+    patrol.add_argument('--execution', choices=['legacy', 'confirmed'], default='legacy',
+                        help='Choose observation-only dispatch or tracked execution with status probes')
+    patrol.add_argument('--drop-completion-reports', action='store_true',
+                        help='Simulate loss of unsolicited completion reports')
+    patrol.add_argument('--inspection', type=Path, help='Asset locations and DiagnosisAgent alert results (JSON)')
+    patrol.add_argument('--alarm-policy', choices=['verified', 'all'], default='verified',
+                        help='Require high evidence support or accept all usable fault alerts')
     patrol.add_argument('--output-dir', type=Path, default=Path('artifacts/patrol'))
     patrol.add_argument('--no-write', action='store_true')
     patrol_eval = commands.add_parser('patrol-evaluate', help='Paired fleet evaluation with fixed development/held-out seeds')
@@ -95,11 +104,19 @@ def main(argv=None) -> int:
     try:
         if args.command == 'patrol-demo':
             from .patrol.demo import run_demo
+            from .patrol.execution import ExecutionConfig
             from .patrol.scenarios import make_scenario
             from .patrol.models import scenario_from_dict
+            from .patrol.inspection import inspection_from_dict
             scenario = (scenario_from_dict(json.loads(args.config.read_text(), parse_constant=_reject_constant))
                         if args.config else make_scenario(args.scenario, args.seed))
-            result = run_demo(scenario, args.output_dir, allocator=args.allocator, write=not args.no_write)
+            execution = ExecutionConfig() if args.execution == 'confirmed' else None
+            inspection = (inspection_from_dict(json.loads(args.inspection.read_text(encoding='utf-8'),
+                                                          parse_constant=_reject_constant))
+                          if args.inspection else None)
+            result = run_demo(scenario, args.output_dir, allocator=args.allocator, write=not args.no_write,
+                              execution=execution, drop_completion_reports=args.drop_completion_reports,
+                              traffic=args.traffic, inspection=inspection, alarm_policy=args.alarm_policy)
             exit_code = 0
         elif args.command == 'patrol-evaluate':
             from .patrol.evaluation import evaluate_suite

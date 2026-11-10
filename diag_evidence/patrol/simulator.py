@@ -5,6 +5,8 @@ import heapq
 import json
 
 from .evidence import EvidenceInbox
+from .execution import ExecutionConfig, ExecutionProtocol
+from .inspection import InspectionPlan, InspectionRun
 from .models import Observation
 from .planning import astar, allocate
 
@@ -22,8 +24,15 @@ class Robot:
     blocked_ticks: int = 0
 
 
-def simulate(scenario, *, policy='verified', allocator='matching', record=True):
-    if allocator not in ('matching', 'greedy') or type(record) is not bool:
+def simulate(scenario, *, policy='verified', allocator='matching', record=True,
+             execution=None, drop_completion_reports=False, traffic='legacy',
+             inspection=None, alarm_policy='verified'):
+    if (allocator not in ('matching', 'greedy') or type(record) is not bool
+            or (execution is not None and not isinstance(execution, ExecutionConfig))
+            or type(drop_completion_reports) is not bool
+            or traffic not in ('legacy', 'yield') or alarm_policy not in ('verified', 'all')
+            or (inspection is not None and (not isinstance(inspection, InspectionPlan) or execution is None))
+            or (inspection is None and alarm_policy != 'verified')):
         raise ValueError('Invalid patrol simulation controls')
     inbox = EvidenceInbox(scenario, policy)
     robots = {r.id: Robot(r.id, r.home, r.home, r.battery) for r in scenario.robots}
@@ -48,6 +57,10 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True):
         if record:
             events.append({'tick': tick, 'kind': kind, **details})
 
+    protocol = (ExecutionProtocol(execution, scenario.report_delay, drop_completion_reports, event)
+                if execution is not None else None)
+    inspector = InspectionRun(inspection, scenario, alarm_policy) if inspection is not None else None
+
     def enqueue(obs):
         nonlocal serial
         heapq.heappush(pending, (obs.available_at, serial, obs)); serial += 1
@@ -59,7 +72,30 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True):
     def belief(task, tick):
         if policy == 'oracle':
             return 'completed' if task in completed else 'pending'
+        if protocol is not None and task in protocol.confirmed:
+            return 'completed'
         return inbox.status(task, tick)
+
+    def clear_assignment(robot):
+        robot.task, robot.path, robot.service_left = None, [], 0
+
+    def detour(robot, occupied):
+        goal = tasks[robot.task].cell if robot.task else robot.home
+        replacement = astar(scenario.grid, robot.cell, goal, occupied)
+        counters['traffic_replans'] += 1
+        if replacement is None:
+            return None
+        back = route(goal, robot.home)
+        remaining = robot.service_left if robot.task else 0
+        if back is not None and len(replacement) + remaining + len(back) <= robot.battery:
+            return replacement
+        return None
+
+    def traffic_priority(rid):
+        task = tasks.get(robots[rid].task)
+        if task is None:
+            return True, 0, 0, rid
+        return False, task.deadline, -task.priority, rid
 
     frame_start = 0
     for tick in range(scenario.horizon + 1):
@@ -69,11 +105,21 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True):
                 if robot.task is not None:
                     interrupted.add(robot.task)
                     event(tick, 'assignment_interrupted', robot=robot.id, task=robot.task)
-                robot.task, robot.path, robot.service_left = None, [], 0
+                    if protocol is not None:
+                        protocol.stop(robot.task, tick, 'outage')
+                clear_assignment(robot)
                 event(tick, 'robot_down', robot=robot.id)
             elif robot.down and not down:
                 event(tick, 'robot_recovered', robot=robot.id)
             robot.down = down
+        if protocol is not None:
+            offline = {r.id for r in robots.values() if r.down}
+            for dispatch in protocol.advance(tick, offline):
+                robot = robots[dispatch.robot]
+                if robot.task == dispatch.task:
+                    clear_assignment(robot)
+        if inspector is not None:
+            inspector.advance(tick, protocol.confirmed, tasks, event)
         while pending and pending[0][0] <= tick:
             _, _, obs = heapq.heappop(pending)
             reason = inbox.receive(obs, tick)
@@ -83,11 +129,15 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True):
         for robot in robots.values():
             if robot.task is not None and belief(robot.task, tick) == 'completed':
                 event(tick, 'assignment_cancelled', robot=robot.id, task=robot.task)
-                robot.task, robot.path, robot.service_left = None, [], 0
+                if protocol is not None:
+                    protocol.stop(robot.task, tick, 'observation')
+                clear_assignment(robot)
 
         if tick < scenario.horizon:
             reserved = {r.task for r in robots.values() if r.task is not None}
-            ready = [t for t in scenario.tasks if t.release <= tick < t.deadline and
+            if protocol is not None:
+                reserved.update(protocol.leases)
+            ready = [t for t in tasks.values() if t.release <= tick < t.deadline and
                      t.id not in reserved and belief(t.id, tick) != 'completed']
             idle = [r for r in robots.values() if not r.down and r.task is None]
             paths, utilities = {}, {}
@@ -108,16 +158,23 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True):
                 counters['assignment_rounds'] += 1
             for rid, tid in assignments:
                 robot, task = robots[rid], tasks[tid]
-                robot.task, robot.path, robot.service_left = tid, paths[(rid, tid)], task.service
+                path = paths[(rid, tid)]
+                execution_details = {}
+                if protocol is not None:
+                    expected_finish = tick + len(path) + task.service
+                    dispatch = protocol.start(rid, tid, tick, expected_finish)
+                    execution_details['attempt'] = dispatch.attempt
+                robot.task, robot.path, robot.service_left = tid, path, task.service
                 robot.blocked_ticks = 0
                 event(tick, 'assigned', robot=rid, task=tid, utility=utilities[(rid, tid)],
-                      belief=belief(tid, tick), route_steps=len(robot.path))
+                      belief=belief(tid, tick), route_steps=len(robot.path), **execution_details)
                 if tid in interrupted:
                     event(tick, 'reassigned_after_outage', robot=rid, task=tid)
                     interrupted.remove(tid)
             # Idle robots return to distinct parking cells, keeping work sites clear.
             for robot in robots.values():
-                if not robot.down and robot.task is None and robot.cell != robot.home:
+                if (not robot.down and robot.task is None and robot.cell != robot.home
+                        and (traffic == 'legacy' or not robot.path)):
                     robot.path = route(robot.cell, robot.home) or []
         if record:
             frames.append({'tick': tick,
@@ -127,7 +184,15 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True):
                 'tasks': [{'id': t.id, 'cell': list(t.cell), 'release': t.release, 'deadline': t.deadline,
                            'priority': t.priority, 'completed_at': completed.get(t.id),
                            'belief': belief(t.id, tick), 'assigned_to': next((r.id for r in robots.values() if r.task == t.id), None)}
-                          for t in scenario.tasks], 'events': events[frame_start:]})
+                          for t in tasks.values()], 'events': events[frame_start:]})
+            if inspector is not None:
+                frames[-1]['inspection_assets'] = inspector.snapshot()
+            if protocol is not None:
+                frames[-1]['execution_leases'] = {
+                    task: {'attempt': lease.dispatch.attempt, 'robot': lease.dispatch.robot,
+                           'query_pending': lease.probing}
+                    for task, lease in protocol.leases.items()
+                }
             frame_start = len(events)
         if tick == scenario.horizon:
             break
@@ -158,6 +223,24 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True):
             for b in robots:
                 if a < b and destinations[a] == old_positions[b] and destinations[b] == old_positions[a]:
                     raise RuntimeError('Patrol edge collision')
+        yielding, holding = {}, set()
+        if traffic == 'yield':
+            for rid in sorted(robots):
+                other = occupied.get(proposed[rid])
+                if other is None or other <= rid or proposed[other] != old_positions[rid]:
+                    continue
+                if max(robots[rid].blocked_ticks, robots[other].blocked_ticks) == 0:
+                    continue
+                # Keep the original reservation rules and replace at most one
+                # route for a blocked pair. Retry after another wait if no
+                # energy-feasible detour exists from these positions.
+                holding.update((rid, other))
+                first, second = sorted((rid, other), key=traffic_priority)
+                for yielder, keeper in ((second, first), (first, second)):
+                    alternative = detour(robots[yielder], occupied.keys() - {old_positions[yielder]})
+                    if alternative:
+                        yielding[yielder] = (keeper, alternative)
+                        break
         for rid, robot in robots.items():
             nxt = destinations[rid]
             if nxt != robot.cell:
@@ -167,16 +250,18 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True):
                 robot.blocked_ticks = 0; counters['travel_steps'] += 1
             elif robot.path and not robot.down:
                 robot.blocked_ticks += 1; counters['traffic_waits'] += 1
-                if robot.blocked_ticks >= 2:
-                    goal = tasks[robot.task].cell if robot.task else robot.home
+                if rid in yielding:
+                    keeper, robot.path = yielding[rid]
+                    robot.blocked_ticks = 0
+                    event(tick + 1, 'traffic_yield', robot=rid, keeper=keeper,
+                          task=robot.task, route_steps=len(robot.path))
+                elif rid in holding:
+                    robot.blocked_ticks = 0
+                elif robot.blocked_ticks >= 2:
                     others = frozenset(r.cell for r in robots.values() if r.id != rid)
-                    replacement = astar(scenario.grid, robot.cell, goal, others)
-                    counters['traffic_replans'] += 1
+                    replacement = detour(robot, others)
                     if replacement is not None:
-                        back = route(goal, robot.home)
-                        remaining = robot.service_left if robot.task else 0
-                        if back is not None and len(replacement) + remaining + len(back) <= robot.battery:
-                            robot.path = replacement
+                        robot.path = replacement
                     robot.blocked_ticks = 0
             elif (robot.task is not None and not robot.down and robot.cell == tasks[robot.task].cell
                     and robot.battery > 0):
@@ -189,16 +274,21 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True):
                         event(tick + 1, 'task_completed', robot=rid, task=tid)
                     else:
                         event(tick + 1, 'task_reinspected', robot=rid, task=tid)
-                    obs = Observation(scenario.mission, tid, tasks[tid].revision, 'completed',
-                        tick + 1, tick + 1 + scenario.report_delay, rid, 'visit-' + str(tick + 1) + '-' + tid)
-                    enqueue(obs)
-                    robot.task, robot.path, robot.service_left = None, [], 0
+                    if protocol is not None:
+                        protocol.finish(tid, rid, tick + 1)
+                    elif drop_completion_reports:
+                        event(tick + 1, 'completion_report_dropped', robot=rid, task=tid)
+                    else:
+                        obs = Observation(scenario.mission, tid, tasks[tid].revision, 'completed',
+                            tick + 1, tick + 1 + scenario.report_delay, rid, 'visit-' + str(tick + 1) + '-' + tid)
+                        enqueue(obs)
+                    clear_assignment(robot)
             if robot.battery < 0:
                 raise RuntimeError('Negative robot battery')
-    on_time = [t for t in scenario.tasks if t.id in completed and completed[t.id] <= t.deadline]
+    on_time = [t for t in tasks.values() if t.id in completed and completed[t.id] <= t.deadline]
     metrics = {'tasks': len(tasks), 'on_time_completed': len(on_time),
         'on_time_completion_rate': len(on_time) / len(tasks),
-        'weighted_on_time_rate': sum(t.priority for t in on_time) / sum(t.priority for t in scenario.tasks),
+        'weighted_on_time_rate': sum(t.priority for t in on_time) / sum(t.priority for t in tasks.values()),
         'missed_tasks': len(tasks) - len(on_time), 'travel_steps': counters['travel_steps'],
         'reinspections': counters['task_reinspected'],
         'reassignments_after_outage': counters['reassigned_after_outage'],
@@ -213,7 +303,42 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True):
         'reports_received': counters['report_received'] + counters['report_rejected'],
         'message_rejections': dict(inbox.rejections),
         'completion_times': dict(sorted(completed.items()))}
-    return {'scenario': scenario.name, 'mission': scenario.mission, 'policy': policy, 'allocator': allocator,
+    if drop_completion_reports:
+        metrics['completion_reports_dropped'] = (counters['completion_report_dropped']
+                                                 + counters['execution_result_dropped'])
+    if traffic == 'yield':
+        metrics['traffic_yields'] = counters['traffic_yield']
+    if protocol is not None:
+        lags = protocol.confirmation_lags
+        metrics.update(
+            execution_confirmed=len(lags),
+            execution_unresolved=len(protocol.leases),
+            execution_unconfirmed_completed=len(completed.keys() - protocol.confirmed.keys()),
+            execution_queries=counters['execution_queried'],
+            execution_timeouts=counters['execution_timed_out'],
+            reassignments_after_timeout=counters['execution_reassigned_after_timeout'],
+            duplicate_dispatches_ignored=counters['dispatch_duplicate'],
+            stale_replies_ignored=counters['execution_stale_reply'],
+            duplicate_replies_ignored=counters['execution_duplicate_reply'],
+            execution_messages=protocol.messages,
+            execution_payload_bytes=protocol.payload_bytes,
+            mean_confirmation_lag=sum(lags) / len(lags) if lags else None,
+        )
+    result = {'scenario': scenario.name, 'mission': scenario.mission, 'policy': policy, 'allocator': allocator,
             'grid': {'width': scenario.grid.width, 'height': scenario.grid.height,
                      'blocked': [list(c) for c in sorted(scenario.grid.blocked)]},
             'metrics': metrics, 'frames': frames, 'events': events}
+    if inspector is not None:
+        inspection_on_time = sum(t.id in inspector.generated for t in on_time)
+        metrics.update(
+            inspection_tasks=len(inspector.generated),
+            inspection_on_time=inspection_on_time,
+            inspection_ignored_alerts=counters['inspection_alert_ignored'],
+            inspection_confirmed=counters['inspection_result'],
+            inspection_normal_findings=inspector.findings['normal'],
+            inspection_fault_findings=inspector.findings['fault'],
+            inspection_inconclusive=inspector.findings['inconclusive'],
+            routine_on_time=len(on_time) - inspection_on_time,
+        )
+        result['inspection_assets'] = inspector.snapshot()
+    return result
