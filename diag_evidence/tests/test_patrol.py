@@ -273,6 +273,30 @@ class ExecutionConfirmationTests(unittest.TestCase):
         self.assertEqual(run['metrics']['reinspections'], 0)
 
 
+class TrafficYieldTests(unittest.TestCase):
+    def test_head_on_yield_breaks_symmetric_replanning_cycles(self):
+        for seed in (42, 48):
+            with self.subTest(seed=seed):
+                scenario = make_scenario('delayed', seed)
+                config = ExecutionConfig()
+                baseline = simulate(scenario, execution=config, record=False)
+                run = simulate(scenario, execution=config, traffic='yield')
+                self.assertEqual(baseline['metrics']['on_time_completed'], 6)
+                self.assertEqual(run['metrics']['on_time_completed'], 8)
+                self.assertEqual(run['metrics']['reinspections'], 0)
+                self.assertLess(run['metrics']['traffic_replans'], baseline['metrics']['traffic_replans'])
+                event, = [e for e in run['events'] if e['kind'] == 'traffic_yield']
+                before, after = [
+                    {r['id']: r for r in run['frames'][t]['robots']}
+                    for t in (event['tick'] - 1, event['tick'])
+                ]
+                yielder, keeper = event['robot'], event['keeper']
+                self.assertEqual(before[yielder]['path'][0], before[keeper]['cell'])
+                self.assertEqual(before[keeper]['path'][0], before[yielder]['cell'])
+                self.assertEqual(after[keeper]['path'], before[keeper]['path'])
+                self.assertNotEqual(after[yielder]['path'][0], before[yielder]['path'][0])
+
+
 class DeliveryTests(unittest.TestCase):
     def test_demo_no_write_has_no_filesystem_side_effects(self):
         with mock.patch.object(Path, 'mkdir', side_effect=AssertionError('unexpected output')):

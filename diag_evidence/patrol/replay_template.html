@@ -34,6 +34,7 @@ const panels={};
 function element(tag,text,cls){const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x}
 document.getElementById('context').textContent=`场景：${scenarioNames[data.scenario.name]||data.scenario.name} ｜ 任务轮次：${data.scenario.mission} ｜ 分配器：${data.runs.verified.allocator==='matching'?'精确单步匹配':'贪心分配'} ｜ ${data.scenario.robots.length}台机器人 / ${data.scenario.tasks.length}个任务`;
 if(data.execution) document.getElementById('context').textContent += ' ｜ 执行确认';
+if(data.traffic==='yield') document.getElementById('context').textContent += ' ｜ 单方绕行';
 if(data.drop_completion_reports) document.getElementById('context').textContent += ' ｜ 主动完工回执丢失';
 for(const policy of policies){
  const panel=element('section',undefined,'panel'),head=element('header');head.append(element('h2',labels[policy]),element('p',descriptions[policy],'muted'));panel.append(head);
@@ -49,6 +50,7 @@ if(data.execution) rows.push(
  ['超时重派次数',m=>m.reassignments_after_timeout],
  ['执行消息载荷字节',m=>m.execution_payload_bytes]
 );
+if(data.traffic==='yield') rows.push(['迎面冲突绕行次数',m=>m.traffic_yields]);
 for(const [title,format] of rows){const tr=element('tr');tr.append(element('th',title));for(const p of policies)tr.append(element('td',String(format(data.runs[p].metrics))));document.getElementById('summary').append(tr)}
 function draw(canvas,run,frame){
  const ratio=window.devicePixelRatio||1,w=canvas.clientWidth,h=w*run.grid.height/run.grid.width;
@@ -69,7 +71,8 @@ const executionEvents={
  execution_result_dropped:'主动完工回执丢失',execution_still_running:'查询显示仍在执行',
  execution_closed:'关闭执行',completion_report_dropped:'主动完工报告丢失'
 };
-function eventText(e){let text='';switch(e.kind){case'assigned':text=`${e.robot} → ${e.task}，派工评分 ${e.utility}`;break;case'report_rejected':text=`拦截 ${e.task}：${reasons[e.reason]||e.reason}`;break;case'report_received':text=`收到 ${e.origin} 的 ${e.task} ${e.state==='completed'?'完工':'待办'}观测（观测时刻 ${e.observed_at}）`;break;case'task_completed':text=`${e.robot} 完成 ${e.task}`;break;case'task_reinspected':text=`${e.robot} 复检 ${e.task}`;break;case'robot_down':text=`${e.robot} 暂时故障`;break;case'robot_recovered':text=`${e.robot} 恢复可用`;break;case'assignment_interrupted':text=`${e.robot} 的 ${e.task} 执行中断`;break;case'reassigned_after_outage':text=`${e.task} 重新派给 ${e.robot}`;break;case'assignment_cancelled':text=`根据完工消息取消 ${e.robot} 的 ${e.task}`;break;default:text=executionEvents[e.kind]?`${executionEvents[e.kind]} ${e.task}${e.attempt===undefined?'':` #${e.attempt}`}`:e.kind}return `t=${e.tick}  ${text}`}
+function trafficEventText(e){return `${e.robot} 绕行，${e.keeper} 保留路线（新路线 ${e.route_steps} 步）`}
+function eventText(e){if(e.kind==='traffic_yield')return `t=${e.tick}  ${trafficEventText(e)}`;let text='';switch(e.kind){case'assigned':text=`${e.robot} → ${e.task}，派工评分 ${e.utility}`;break;case'report_rejected':text=`拦截 ${e.task}：${reasons[e.reason]||e.reason}`;break;case'report_received':text=`收到 ${e.origin} 的 ${e.task} ${e.state==='completed'?'完工':'待办'}观测（观测时刻 ${e.observed_at}）`;break;case'task_completed':text=`${e.robot} 完成 ${e.task}`;break;case'task_reinspected':text=`${e.robot} 复检 ${e.task}`;break;case'robot_down':text=`${e.robot} 暂时故障`;break;case'robot_recovered':text=`${e.robot} 恢复可用`;break;case'assignment_interrupted':text=`${e.robot} 的 ${e.task} 执行中断`;break;case'reassigned_after_outage':text=`${e.task} 重新派给 ${e.robot}`;break;case'assignment_cancelled':text=`根据完工消息取消 ${e.robot} 的 ${e.task}`;break;default:text=executionEvents[e.kind]?`${executionEvents[e.kind]} ${e.task}${e.attempt===undefined?'':` #${e.attempt}`}`:e.kind}return `t=${e.tick}  ${text}`}
 function render(){
  document.getElementById('tick').textContent=`时刻 ${tick} / ${horizon}`;document.getElementById('scrub').value=tick;
  for(const p of policies){const run=data.runs[p],frame=run.frames[tick],ui=panels[p];draw(ui.canvas,run,frame);
@@ -87,7 +90,7 @@ function pause(){playing=false;document.getElementById('play').textContent='播�
 document.getElementById('scrub').max=horizon;document.getElementById('scrub').addEventListener('input',e=>{pause();tick=Number(e.target.value);render()});
 document.getElementById('play').addEventListener('click',()=>{if(playing){pause()}else{if(tick===horizon)tick=0;playing=true;last=performance.now();document.getElementById('play').textContent='暂停';render()}});
 document.getElementById('back').addEventListener('click',()=>{pause();tick=Math.max(0,tick-1);render()});document.getElementById('next').addEventListener('click',()=>{pause();tick=Math.min(horizon,tick+1);render()});
-const anomalies=new Set(['report_rejected','assignment_interrupted','execution_result_dropped','completion_report_dropped','execution_timed_out','execution_stale_reply']);
+const anomalies=new Set(['report_rejected','assignment_interrupted','execution_result_dropped','completion_report_dropped','execution_timed_out','execution_stale_reply','traffic_yield']);
 document.getElementById('anomaly').addEventListener('click',()=>{pause();const future=data.runs.verified.events.find(e=>e.tick>tick&&anomalies.has(e.kind));tick=future?future.tick:0;render()});
 function loop(now){if(playing&&now-last>=1000/Number(document.getElementById('speed').value)){tick=Math.min(horizon,tick+1);last=now;if(tick===horizon)pause();render()}requestAnimationFrame(loop)}
 window.addEventListener('resize',render);render();requestAnimationFrame(loop);

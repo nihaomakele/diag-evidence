@@ -36,6 +36,8 @@ def main(argv=None) -> int:
     patrol_input.add_argument('--config', type=Path, help='Custom patrol mission JSON')
     patrol.add_argument('--seed', type=int, default=7)
     patrol.add_argument('--allocator', choices=['greedy', 'matching'], default='matching')
+    patrol.add_argument('--traffic', choices=['legacy', 'yield'], default='legacy',
+                        help='Resolve a blocked head-on pair with a single energy-feasible detour')
     patrol.add_argument('--execution', choices=['legacy', 'confirmed'], default='legacy',
                         help='Choose observation-only dispatch or tracked execution with status probes')
     patrol.add_argument('--drop-completion-reports', action='store_true',
@@ -106,7 +108,8 @@ def main(argv=None) -> int:
                         if args.config else make_scenario(args.scenario, args.seed))
             execution = ExecutionConfig() if args.execution == 'confirmed' else None
             result = run_demo(scenario, args.output_dir, allocator=args.allocator, write=not args.no_write,
-                              execution=execution, drop_completion_reports=args.drop_completion_reports)
+                              execution=execution, drop_completion_reports=args.drop_completion_reports,
+                              traffic=args.traffic)
             exit_code = 0
         elif args.command == 'patrol-evaluate':
             from .patrol.evaluation import evaluate_suite

@@ -24,10 +24,11 @@ class Robot:
 
 
 def simulate(scenario, *, policy='verified', allocator='matching', record=True,
-             execution=None, drop_completion_reports=False):
+             execution=None, drop_completion_reports=False, traffic='legacy'):
     if (allocator not in ('matching', 'greedy') or type(record) is not bool
             or (execution is not None and not isinstance(execution, ExecutionConfig))
-            or type(drop_completion_reports) is not bool):
+            or type(drop_completion_reports) is not bool
+            or traffic not in ('legacy', 'yield')):
         raise ValueError('Invalid patrol simulation controls')
     inbox = EvidenceInbox(scenario, policy)
     robots = {r.id: Robot(r.id, r.home, r.home, r.battery) for r in scenario.robots}
@@ -72,6 +73,24 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True,
 
     def clear_assignment(robot):
         robot.task, robot.path, robot.service_left = None, [], 0
+
+    def detour(robot, occupied):
+        goal = tasks[robot.task].cell if robot.task else robot.home
+        replacement = astar(scenario.grid, robot.cell, goal, occupied)
+        counters['traffic_replans'] += 1
+        if replacement is None:
+            return None
+        back = route(goal, robot.home)
+        remaining = robot.service_left if robot.task else 0
+        if back is not None and len(replacement) + remaining + len(back) <= robot.battery:
+            return replacement
+        return None
+
+    def traffic_priority(rid):
+        task = tasks.get(robots[rid].task)
+        if task is None:
+            return True, 0, 0, rid
+        return False, task.deadline, -task.priority, rid
 
     frame_start = 0
     for tick in range(scenario.horizon + 1):
@@ -147,7 +166,8 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True,
                     interrupted.remove(tid)
             # Idle robots return to distinct parking cells, keeping work sites clear.
             for robot in robots.values():
-                if not robot.down and robot.task is None and robot.cell != robot.home:
+                if (not robot.down and robot.task is None and robot.cell != robot.home
+                        and (traffic == 'legacy' or not robot.path)):
                     robot.path = route(robot.cell, robot.home) or []
         if record:
             frames.append({'tick': tick,
@@ -194,6 +214,24 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True,
             for b in robots:
                 if a < b and destinations[a] == old_positions[b] and destinations[b] == old_positions[a]:
                     raise RuntimeError('Patrol edge collision')
+        yielding, holding = {}, set()
+        if traffic == 'yield':
+            for rid in sorted(robots):
+                other = occupied.get(proposed[rid])
+                if other is None or other <= rid or proposed[other] != old_positions[rid]:
+                    continue
+                if max(robots[rid].blocked_ticks, robots[other].blocked_ticks) == 0:
+                    continue
+                # Keep the original reservation rules and replace at most one
+                # route for a blocked pair. Retry after another wait if no
+                # energy-feasible detour exists from these positions.
+                holding.update((rid, other))
+                first, second = sorted((rid, other), key=traffic_priority)
+                for yielder, keeper in ((second, first), (first, second)):
+                    alternative = detour(robots[yielder], occupied.keys() - {old_positions[yielder]})
+                    if alternative:
+                        yielding[yielder] = (keeper, alternative)
+                        break
         for rid, robot in robots.items():
             nxt = destinations[rid]
             if nxt != robot.cell:
@@ -203,16 +241,18 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True,
                 robot.blocked_ticks = 0; counters['travel_steps'] += 1
             elif robot.path and not robot.down:
                 robot.blocked_ticks += 1; counters['traffic_waits'] += 1
-                if robot.blocked_ticks >= 2:
-                    goal = tasks[robot.task].cell if robot.task else robot.home
+                if rid in yielding:
+                    keeper, robot.path = yielding[rid]
+                    robot.blocked_ticks = 0
+                    event(tick + 1, 'traffic_yield', robot=rid, keeper=keeper,
+                          task=robot.task, route_steps=len(robot.path))
+                elif rid in holding:
+                    robot.blocked_ticks = 0
+                elif robot.blocked_ticks >= 2:
                     others = frozenset(r.cell for r in robots.values() if r.id != rid)
-                    replacement = astar(scenario.grid, robot.cell, goal, others)
-                    counters['traffic_replans'] += 1
+                    replacement = detour(robot, others)
                     if replacement is not None:
-                        back = route(goal, robot.home)
-                        remaining = robot.service_left if robot.task else 0
-                        if back is not None and len(replacement) + remaining + len(back) <= robot.battery:
-                            robot.path = replacement
+                        robot.path = replacement
                     robot.blocked_ticks = 0
             elif (robot.task is not None and not robot.down and robot.cell == tasks[robot.task].cell
                     and robot.battery > 0):
@@ -257,6 +297,8 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True,
     if drop_completion_reports:
         metrics['completion_reports_dropped'] = (counters['completion_report_dropped']
                                                  + counters['execution_result_dropped'])
+    if traffic == 'yield':
+        metrics['traffic_yields'] = counters['traffic_yield']
     if protocol is not None:
         lags = protocol.confirmation_lags
         metrics.update(

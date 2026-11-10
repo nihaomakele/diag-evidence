@@ -11,15 +11,18 @@ from .simulator import simulate
 
 
 def run_demo(scenario, output_dir='artifacts/patrol', *, allocator='matching', write=True,
-             execution=None, drop_completion_reports=False):
+             execution=None, drop_completion_reports=False, traffic='legacy'):
     if type(write) is not bool:
         raise ValueError('Invalid patrol output control')
     runs = {policy: simulate(scenario, policy=policy, allocator=allocator, record=write,
-                             execution=execution, drop_completion_reports=drop_completion_reports)
+                             execution=execution, drop_completion_reports=drop_completion_reports,
+                             traffic=traffic)
             for policy in POLICIES}
     summary = {'scenario': scenario.name, 'mission': scenario.mission, 'allocator': allocator,
                'metrics': {name: run['metrics'] for name, run in runs.items()}}
     controls = {}
+    if traffic != 'legacy':
+        controls['traffic'] = traffic
     if execution is not None:
         controls['execution'] = asdict(execution)
     if drop_completion_reports:

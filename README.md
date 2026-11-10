@@ -2,7 +2,7 @@
 
 **多机器人协同巡检：在线任务分配、信息核验与可回放评估。**
 
-当前开发版 **0.3.0.dev1**。在二维栅格中，机器人接收任务、避障移动、执行巡检，并在消息到达或机器人故障后更新派工。核验直接参与每次调度决策。
+当前开发版 **0.3.0.dev2**。在二维栅格中，机器人接收任务、避障移动、执行巡检，并在消息到达或机器人故障后更新派工。核验直接参与每次调度决策。
 
 [English](README.en.md) · [调度设计](docs/patrol_scheduling.md) · [项目讲解与面试准备](docs/patrol_project_story.md) · [实验记录](NEXT_VALIDATION.md)
 
@@ -22,6 +22,8 @@ Windows PowerShell使用`.venv\Scripts\Activate.ps1`激活。命令输出`replay
 默认示例为3台机器人、8个任务。混合扰动、种子7中，直接采用消息按时完成4项，核验后完成8项。任务轮次、位置布局与扰动脚本在三种策略间保持一致。
 
 使用 `--execution confirmed` 可启用接单确认、在途预约、完工状态查询和超时重派。报告延迟场景可加 `--drop-completion-reports`，观察调度器如何查询缓存结果。[执行确认设计与实验](docs/patrol_execution.md)
+
+使用 `--traffic yield` 可在迎面僵持时为一台机器人重新规划，另一台保留路线。延迟场景的种子 42 和 48 都从按时完成 6 项恢复到 8 项。[让行设计与 400 次配对仿真](docs/patrol_traffic.md)
 
 ## 系统流程
 

@@ -2,6 +2,13 @@
 
 This file records changes to the public research-preview source tree.
 
+## 0.3.0.dev2 — Head-on traffic yielding
+
+- Add an optional single-robot detour for blocked head-on pairs with
+  deterministic priority and a return-energy check.
+- Add yield events to the replay and verify the two reported failures
+  in a 400-run traffic comparison with execution confirmation fixed.
+
 ## 0.3.0.dev1 — Patrol execution confirmation
 
 - Add opt-in numbered dispatches, acknowledgments, duplicate suppression,
