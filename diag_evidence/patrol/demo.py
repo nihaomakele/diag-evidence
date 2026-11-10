@@ -11,12 +11,13 @@ from .simulator import simulate
 
 
 def run_demo(scenario, output_dir='artifacts/patrol', *, allocator='matching', write=True,
-             execution=None, drop_completion_reports=False, traffic='legacy'):
+             execution=None, drop_completion_reports=False, traffic='legacy',
+             inspection=None, alarm_policy='verified'):
     if type(write) is not bool:
         raise ValueError('Invalid patrol output control')
     runs = {policy: simulate(scenario, policy=policy, allocator=allocator, record=write,
                              execution=execution, drop_completion_reports=drop_completion_reports,
-                             traffic=traffic)
+                             traffic=traffic, inspection=inspection, alarm_policy=alarm_policy)
             for policy in POLICIES}
     summary = {'scenario': scenario.name, 'mission': scenario.mission, 'allocator': allocator,
                'metrics': {name: run['metrics'] for name, run in runs.items()}}
@@ -27,6 +28,9 @@ def run_demo(scenario, output_dir='artifacts/patrol', *, allocator='matching', w
         controls['execution'] = asdict(execution)
     if drop_completion_reports:
         controls['drop_completion_reports'] = True
+    if inspection is not None:
+        controls['alarm_policy'] = alarm_policy
+        summary['inspection_assets'] = {name: run['inspection_assets'] for name, run in runs.items()}
     summary.update(controls)
     if write:
         output = Path(output_dir) / ('patrol-' + uuid.uuid4().hex[:12])

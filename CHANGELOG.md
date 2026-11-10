@@ -2,6 +2,12 @@
 
 This file records changes to the public research-preview source tree.
 
+## 0.3.0.dev3 — Diagnosis-triggered inspection
+
+- Read structured DiagnosisAgent results to schedule reinspection tasks at
+  alert arrival. Track device status after the existing completion handshake.
+- Add an example fixture, alarm-policy comparison and three regression tests.
+
 ## 0.3.0.dev2 — Head-on traffic yielding
 
 - Add an optional single-robot detour for blocked head-on pairs with

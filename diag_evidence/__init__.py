@@ -1,5 +1,5 @@
 """Diagnostic evidence workflow research toolkit."""
-__version__ = "0.3.0.dev2"
+__version__ = "0.3.0.dev3"
 
 # Keep import cheap; avoid loading NumPy and requests until the API is used.
 def __getattr__(name):

@@ -1,0 +1,262 @@
+{
+  "assets": [
+    {
+      "id": "pump-A",
+      "cell": [
+        5,
+        4
+      ],
+      "simulated_finding": "fault"
+    },
+    {
+      "id": "pump-B",
+      "cell": [
+        7,
+        4
+      ],
+      "simulated_finding": "normal"
+    },
+    {
+      "id": "fan-C",
+      "cell": [
+        8,
+        5
+      ],
+      "simulated_finding": "fault"
+    },
+    {
+      "id": "motor-D",
+      "cell": [
+        12,
+        4
+      ],
+      "simulated_finding": "normal"
+    },
+    {
+      "id": "motor-E",
+      "cell": [
+        4,
+        7
+      ],
+      "simulated_finding": "inconclusive"
+    }
+  ],
+  "alerts": [
+    {
+      "asset": "pump-A",
+      "observed_at": 2,
+      "available_at": 4,
+      "result": {
+        "schema_version": "1.0",
+        "run_id": "alarm-A",
+        "ok": true,
+        "terminal_state": "COMPLETED",
+        "support_level": "high",
+        "effective_strength": "moderate",
+        "max_allowed_strength": "strong",
+        "outcomes": {
+          "diagnosis": {
+            "status": "ok",
+            "data": {
+              "diagnosis": {
+                "label_schema": "faults-v1",
+                "predicted_class": 2,
+                "confidence": 0.81,
+                "model_available": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "asset": "pump-B",
+      "observed_at": 4,
+      "available_at": 5,
+      "result": {
+        "schema_version": "1.0",
+        "run_id": "alarm-B",
+        "ok": false,
+        "terminal_state": "DEGRADED",
+        "support_level": "low",
+        "effective_strength": "weak",
+        "max_allowed_strength": "weak",
+        "outcomes": {
+          "diagnosis": {
+            "status": "degraded",
+            "data": {
+              "diagnosis": {
+                "label_schema": "faults-v1",
+                "predicted_class": 2,
+                "confidence": 0.2,
+                "model_available": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "asset": "pump-A",
+      "observed_at": 2,
+      "available_at": 5,
+      "result": {
+        "schema_version": "1.0",
+        "run_id": "alarm-A",
+        "ok": true,
+        "terminal_state": "COMPLETED",
+        "support_level": "high",
+        "effective_strength": "moderate",
+        "max_allowed_strength": "strong",
+        "outcomes": {
+          "diagnosis": {
+            "status": "ok",
+            "data": {
+              "diagnosis": {
+                "label_schema": "faults-v1",
+                "predicted_class": 2,
+                "confidence": 0.81,
+                "model_available": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "asset": "fan-C",
+      "observed_at": 5,
+      "available_at": 6,
+      "result": {
+        "schema_version": "1.0",
+        "run_id": "alarm-C",
+        "ok": false,
+        "terminal_state": "DEGRADED",
+        "support_level": "low",
+        "effective_strength": "weak",
+        "max_allowed_strength": "weak",
+        "outcomes": {
+          "diagnosis": {
+            "status": "degraded",
+            "data": {
+              "diagnosis": {
+                "label_schema": "faults-v1",
+                "predicted_class": 2,
+                "confidence": 0.2,
+                "model_available": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "asset": "pump-A",
+      "observed_at": 6,
+      "available_at": 7,
+      "result": {
+        "schema_version": "1.0",
+        "run_id": "alarm-A-followup",
+        "ok": true,
+        "terminal_state": "COMPLETED",
+        "support_level": "high",
+        "effective_strength": "moderate",
+        "max_allowed_strength": "strong",
+        "outcomes": {
+          "diagnosis": {
+            "status": "ok",
+            "data": {
+              "diagnosis": {
+                "label_schema": "faults-v1",
+                "predicted_class": 2,
+                "confidence": 0.81,
+                "model_available": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "asset": "motor-D",
+      "observed_at": 9,
+      "available_at": 10,
+      "result": {
+        "schema_version": "1.0",
+        "run_id": "alarm-D",
+        "ok": true,
+        "terminal_state": "COMPLETED",
+        "support_level": "high",
+        "effective_strength": "moderate",
+        "max_allowed_strength": "strong",
+        "outcomes": {
+          "diagnosis": {
+            "status": "ok",
+            "data": {
+              "diagnosis": {
+                "label_schema": "faults-v1",
+                "predicted_class": 2,
+                "confidence": 0.81,
+                "model_available": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "asset": "motor-E",
+      "observed_at": 11,
+      "available_at": 11,
+      "result": {
+        "schema_version": "1.0",
+        "run_id": "alarm-E",
+        "ok": true,
+        "terminal_state": "COMPLETED",
+        "support_level": "high",
+        "effective_strength": "moderate",
+        "max_allowed_strength": "strong",
+        "outcomes": {
+          "diagnosis": {
+            "status": "ok",
+            "data": {
+              "diagnosis": {
+                "label_schema": "bearing-health-v1",
+                "predicted_class": 3,
+                "confidence": 0.81,
+                "model_available": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "asset": "pump-B",
+      "observed_at": 0,
+      "available_at": 20,
+      "result": {
+        "schema_version": "1.0",
+        "run_id": "alarm-B-stale",
+        "ok": true,
+        "terminal_state": "COMPLETED",
+        "support_level": "high",
+        "effective_strength": "moderate",
+        "max_allowed_strength": "strong",
+        "outcomes": {
+          "diagnosis": {
+            "status": "ok",
+            "data": {
+              "diagnosis": {
+                "label_schema": "faults-v1",
+                "predicted_class": 2,
+                "confidence": 0.81,
+                "model_available": true
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

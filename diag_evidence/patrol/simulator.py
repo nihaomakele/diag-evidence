@@ -6,6 +6,7 @@ import json
 
 from .evidence import EvidenceInbox
 from .execution import ExecutionConfig, ExecutionProtocol
+from .inspection import InspectionPlan, InspectionRun
 from .models import Observation
 from .planning import astar, allocate
 
@@ -24,11 +25,14 @@ class Robot:
 
 
 def simulate(scenario, *, policy='verified', allocator='matching', record=True,
-             execution=None, drop_completion_reports=False, traffic='legacy'):
+             execution=None, drop_completion_reports=False, traffic='legacy',
+             inspection=None, alarm_policy='verified'):
     if (allocator not in ('matching', 'greedy') or type(record) is not bool
             or (execution is not None and not isinstance(execution, ExecutionConfig))
             or type(drop_completion_reports) is not bool
-            or traffic not in ('legacy', 'yield')):
+            or traffic not in ('legacy', 'yield') or alarm_policy not in ('verified', 'all')
+            or (inspection is not None and (not isinstance(inspection, InspectionPlan) or execution is None))
+            or (inspection is None and alarm_policy != 'verified')):
         raise ValueError('Invalid patrol simulation controls')
     inbox = EvidenceInbox(scenario, policy)
     robots = {r.id: Robot(r.id, r.home, r.home, r.battery) for r in scenario.robots}
@@ -55,6 +59,7 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True,
 
     protocol = (ExecutionProtocol(execution, scenario.report_delay, drop_completion_reports, event)
                 if execution is not None else None)
+    inspector = InspectionRun(inspection, scenario, alarm_policy) if inspection is not None else None
 
     def enqueue(obs):
         nonlocal serial
@@ -113,6 +118,8 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True,
                 robot = robots[dispatch.robot]
                 if robot.task == dispatch.task:
                     clear_assignment(robot)
+        if inspector is not None:
+            inspector.advance(tick, protocol.confirmed, tasks, event)
         while pending and pending[0][0] <= tick:
             _, _, obs = heapq.heappop(pending)
             reason = inbox.receive(obs, tick)
@@ -130,7 +137,7 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True,
             reserved = {r.task for r in robots.values() if r.task is not None}
             if protocol is not None:
                 reserved.update(protocol.leases)
-            ready = [t for t in scenario.tasks if t.release <= tick < t.deadline and
+            ready = [t for t in tasks.values() if t.release <= tick < t.deadline and
                      t.id not in reserved and belief(t.id, tick) != 'completed']
             idle = [r for r in robots.values() if not r.down and r.task is None]
             paths, utilities = {}, {}
@@ -177,7 +184,9 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True,
                 'tasks': [{'id': t.id, 'cell': list(t.cell), 'release': t.release, 'deadline': t.deadline,
                            'priority': t.priority, 'completed_at': completed.get(t.id),
                            'belief': belief(t.id, tick), 'assigned_to': next((r.id for r in robots.values() if r.task == t.id), None)}
-                          for t in scenario.tasks], 'events': events[frame_start:]})
+                          for t in tasks.values()], 'events': events[frame_start:]})
+            if inspector is not None:
+                frames[-1]['inspection_assets'] = inspector.snapshot()
             if protocol is not None:
                 frames[-1]['execution_leases'] = {
                     task: {'attempt': lease.dispatch.attempt, 'robot': lease.dispatch.robot,
@@ -276,10 +285,10 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True,
                     clear_assignment(robot)
             if robot.battery < 0:
                 raise RuntimeError('Negative robot battery')
-    on_time = [t for t in scenario.tasks if t.id in completed and completed[t.id] <= t.deadline]
+    on_time = [t for t in tasks.values() if t.id in completed and completed[t.id] <= t.deadline]
     metrics = {'tasks': len(tasks), 'on_time_completed': len(on_time),
         'on_time_completion_rate': len(on_time) / len(tasks),
-        'weighted_on_time_rate': sum(t.priority for t in on_time) / sum(t.priority for t in scenario.tasks),
+        'weighted_on_time_rate': sum(t.priority for t in on_time) / sum(t.priority for t in tasks.values()),
         'missed_tasks': len(tasks) - len(on_time), 'travel_steps': counters['travel_steps'],
         'reinspections': counters['task_reinspected'],
         'reassignments_after_outage': counters['reassigned_after_outage'],
@@ -315,7 +324,21 @@ def simulate(scenario, *, policy='verified', allocator='matching', record=True,
             execution_payload_bytes=protocol.payload_bytes,
             mean_confirmation_lag=sum(lags) / len(lags) if lags else None,
         )
-    return {'scenario': scenario.name, 'mission': scenario.mission, 'policy': policy, 'allocator': allocator,
+    result = {'scenario': scenario.name, 'mission': scenario.mission, 'policy': policy, 'allocator': allocator,
             'grid': {'width': scenario.grid.width, 'height': scenario.grid.height,
                      'blocked': [list(c) for c in sorted(scenario.grid.blocked)]},
             'metrics': metrics, 'frames': frames, 'events': events}
+    if inspector is not None:
+        inspection_on_time = sum(t.id in inspector.generated for t in on_time)
+        metrics.update(
+            inspection_tasks=len(inspector.generated),
+            inspection_on_time=inspection_on_time,
+            inspection_ignored_alerts=counters['inspection_alert_ignored'],
+            inspection_confirmed=counters['inspection_result'],
+            inspection_normal_findings=inspector.findings['normal'],
+            inspection_fault_findings=inspector.findings['fault'],
+            inspection_inconclusive=inspector.findings['inconclusive'],
+            routine_on_time=len(on_time) - inspection_on_time,
+        )
+        result['inspection_assets'] = inspector.snapshot()
+    return result
